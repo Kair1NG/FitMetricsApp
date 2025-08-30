@@ -1,16 +1,23 @@
-# fit_metrics
+# FitMetrics
 
-A new Flutter project.
+Fit Metrics codebase.
 
-## Getting Started
+```dart
+/// The core development team, built with Flutter.
+class StatelessStudents extends StatelessWidget {
+  const StatelessStudents({super.key});
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  @override
+  Widget build(BuildContext context) {
+    return Team(
+      members: const [
+        Member(name: 'Ocampo, Hans Christian', role: 'Team Lead / Senior Dev'),
+        Member(name: 'Dingal, Marion Anthony', role: 'UI Designer / Front-end'),
+        Member(name: 'Tongol, Joey Michael', role: 'QA / Front-end'),
+        Member(name: 'Predilla, Stanley Emer', role: 'QA / Front-end'),
+        Member(name: 'Gatbonton, Keith Andre', role: 'Docs / Front-end'),
+      ],
+    );
+  }
+}
+```
