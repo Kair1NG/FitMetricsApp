@@ -1,4 +1,3 @@
-import 'package:fit_metrics/common/widgets/Drawer.dart';
 import 'package:fit_metrics/screens/profile.dart';
 import 'package:flutter/material.dart';
 
@@ -10,62 +9,98 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.title = "Fit Metrics",
     this.icon = Icons.fitness_center,
   }) : super(key: key);
-  const CommonAppBar.withTitle(
-    this.title, {
-    Key? key,
-    this.icon = Icons.fitness_center,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bool isProfileScreen = title == "Profile";
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return AppBar(
       title: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white), // You can change this icon
-          SizedBox(width: 8), // Space between icon and text
+          Icon(
+            icon, // You can change this icon,
+            color: colorScheme.onPrimary,
+            size: 24,
+          ),
+          SizedBox(width: 8),
           Text(
-            title,
-            style: TextStyle(fontFamily: 'ShatellSans', color: Colors.white),
+            title, // this title as well.
+            style: TextStyle(
+              fontFamily: 'ShatellSans',
+              color: colorScheme.onPrimary,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
       leading: Builder(
-        builder: (context) => IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CommonDrawer()),
-            );
-          },
-        ),
+        builder: (context) {
+          final bool canGoBack = Navigator.of(context).canPop();
+          return IconButton(
+            icon: Icon(
+              canGoBack ? Icons.arrow_back : Icons.menu,
+              color: colorScheme.onPrimary,
+            ),
+            tooltip: 'Menu',
+            onPressed: () {
+              if (canGoBack) {
+                Navigator.of(context).pop();
+              } else {
+                Scaffold.of(context).openDrawer();
+              }
+            },
+          );
+        },
       ),
       actions: <Widget>[
         if (!isProfileScreen)
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Profile()),
-                );
-              },
-              child: CircleAvatar(
-                //backgroundImage: AssetImage('assets/profile_placeholder.png'),
-                radius: 20.0,
-                backgroundColor: const Color.fromARGB(255, 30, 100, 255),
-                child: Text(
-                  'JD',
-                  style: TextStyle(fontSize: 10, color: Colors.white),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Profile()),
+                  );
+                },
+
+                child: Container(
+                  padding: const EdgeInsets.all(4.0),
+                  child: CircleAvatar(
+                    //backgroundImage: AssetImage('assets/profile_placeholder.png'),
+                    radius: 20.0,
+                    backgroundColor: colorScheme.primaryContainer,
+                    foregroundColor: colorScheme.onPrimaryContainer,
+                    child: Text(
+                      'JD',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
       ],
-      backgroundColor: const Color.fromARGB(255, 20, 80, 240),
+      backgroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onPrimary,
+      elevation: 0,
+      scrolledUnderElevation: 3,
+      shadowColor: colorScheme.shadow,
+      surfaceTintColor: colorScheme.surfaceTint,
+
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(0.0)),
+      ),
+      centerTitle: false,
+      titleSpacing: 16.0,
     );
   }
 

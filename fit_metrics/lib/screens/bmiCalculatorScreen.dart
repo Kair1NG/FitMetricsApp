@@ -1,7 +1,8 @@
 import 'package:fit_metrics/common/widgets/appBar.dart';
+import 'package:fit_metrics/common/widgets/drawer.dart';
 import 'package:fit_metrics/services/bmiCalculator.dart';
 import 'package:flutter/material.dart';
-import '../widgets/bmi_result_box.dart';
+import '../widgets/bmiResultBox.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   const BMICalculatorScreen({super.key});
@@ -35,6 +36,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonAppBar(icon: Icons.calculate, title: "BMI Calculator"),
+      drawer: CommonDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
