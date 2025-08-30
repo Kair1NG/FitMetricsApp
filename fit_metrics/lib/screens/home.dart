@@ -12,7 +12,7 @@ class Home extends StatelessWidget {
       drawer: CommonDrawer(),
       body: Center(
         child: Text(
-          'To whoever codes here :>',
+          'To whoever codes here :> harharhar',
           style: TextStyle(color: colorScheme.onSurface),
         ),
       ),
