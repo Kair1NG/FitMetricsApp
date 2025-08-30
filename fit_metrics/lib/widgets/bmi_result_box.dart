@@ -2,47 +2,127 @@ import 'package:flutter/material.dart';
 
 class BMICalculatorResultBox extends StatelessWidget {
   final double? bmi;
-  final String category;
+  final String? category;
 
-  const BMICalculatorResultBox({super.key, this.bmi, this.category = ""});
+  const BMICalculatorResultBox({
+    super.key,
+    required this.bmi,
+    required this.category,
+  });
+
+  // Returns color based on BMI category
+  Color _categoryColor(String? c, ColorScheme cs) {
+    switch (c) {
+      case 'Underweight':
+        return Colors.blue;
+      case 'Normal weight':
+        return Colors.green;
+      case 'Overweight':
+        return Colors.orange;
+      case 'Obese':
+        return Colors.red;
+      default:
+        return cs.onSurfaceVariant;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (bmi == null) return const SizedBox();
+    final cs = Theme.of(context).colorScheme; // Shortcut for color scheme
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 20),
-        const Center(child: Text("==============================")),
-        const Center(child: Text(" Your BMI Result ")),
-        const Center(child: Text("==============================")),
-        const SizedBox(height: 10),
-        Text(
-          bmi!.toStringAsFixed(1),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+    if (bmi == null || category == null) {
+      return const SizedBox.shrink(); // Hide if not calculated
+    }
+
+    final catColor = _categoryColor(category, cs);
+
+    // Reusable row for each legend category
+    Widget legendRow(String label, String range, Color bg, Color fg) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(8),
         ),
-        Text(
-          category,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(label, style: TextStyle(color: fg)),
+            ), // Take remaining width
+            Text(
+              range,
+              style: TextStyle(fontWeight: FontWeight.w600, color: fg),
+            ),
+          ],
         ),
-        const Center(child: Text("==============================")),
-        const SizedBox(height: 20),
-        const Text(
-          "BMI Classification Chart:",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.bold),
+      );
+    }
+
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Your BMI Result',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Text(
+                bmi!.toStringAsFixed(1), // 1 decimal place
+                style: TextStyle(
+                  fontSize: 44,
+                  fontWeight: FontWeight.w800,
+                  color: catColor,
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                category!,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: catColor,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Legend rows with transparent backgrounds using withAlpha
+            legendRow(
+              'Underweight',
+              '< 18.5',
+              Colors.blue.withAlpha(20),
+              Colors.blue.shade700,
+            ),
+            const SizedBox(height: 8),
+            legendRow(
+              'Normal weight',
+              '18.5 - 24.9',
+              Colors.green.withAlpha(20),
+              Colors.green.shade700,
+            ),
+            const SizedBox(height: 8),
+            legendRow(
+              'Overweight',
+              '25 - 29.9',
+              Colors.orange.withAlpha(25),
+              Colors.orange.shade700,
+            ),
+            const SizedBox(height: 8),
+            legendRow(
+              'Obese',
+              '≥ 30',
+              Colors.red.withAlpha(25),
+              Colors.red.shade700,
+            ),
+          ],
         ),
-        const Center(child: Text("------------------------------")),
-        const Center(child: Text("🔵 Underweight : < 18.5")),
-        const Center(child: Text("🟢 Normal weight : 18.5 – 24.9")),
-        const Center(child: Text("🟠 Overweight : 25 – 29.9")),
-        const Center(child: Text("🔴 Obese : ≥ 30")),
-        const Center(child: Text("------------------------------")),
-      ],
+      ),
     );
   }
 }

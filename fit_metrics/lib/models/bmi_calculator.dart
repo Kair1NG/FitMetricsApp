@@ -2,22 +2,29 @@ class BMICalculator {
   final double bmi;
   final String category;
 
-  BMICalculator._(this.bmi, this.category);
+  const BMICalculator._(this.bmi, this.category);
 
-  static BMICalculator calculate(double heightCm, double weightKg) {
-    final bmi = weightKg / ((heightCm / 100) * (heightCm / 100));
+  static BMICalculator calculate({
+    required double heightCm,
+    required double weightKg,
+  }) {
+    final meters = heightCm / 100.0; // Convert cm to meters
+    final bmi = weightKg / (meters * meters); // BMI formula
+
     String category;
 
+    // Determine BMI category
     if (bmi < 18.5) {
-      category = "Underweight";
-    } else if (bmi < 24.9) {
-      category = "Normal weight";
-    } else if (bmi < 29.9) {
-      category = "Overweight";
+      category = 'Underweight';
+    } else if (bmi < 25) {
+      category = 'Normal weight';
+    } else if (bmi < 30) {
+      category = 'Overweight';
     } else {
-      category = "Obese";
+      category = 'Obese';
     }
 
+    // Return an instance using private constructor
     return BMICalculator._(bmi, category);
   }
 }
