@@ -1,4 +1,5 @@
 import 'package:fit_metrics/screens/home.dart';
+import 'screens/recommendedworkouts.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: Home(),
+       routes: {
+        '/recommendedWorkouts': (context) => const WorkoutLibraryScreen(),
+      },
     );
   }
 }

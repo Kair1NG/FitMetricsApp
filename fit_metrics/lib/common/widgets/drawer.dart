@@ -51,6 +51,13 @@ class CommonDrawer extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            title: const Text('Recommended Workouts'),
+            onTap: () {
+              Navigator.pop(context); 
+              Navigator.pushNamed(context, '/recommendedWorkouts');
+            },
+          ),
         ],
       ),
     );
