@@ -6,8 +6,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData icon;
   const CommonAppBar({
     Key? key,
-    this.title = "Fit Metrics",
-    this.icon = Icons.fitness_center,
+    this.title = "FitMetrics",
+    this.icon = Icons.align_horizontal_right_rounded,
   }) : super(key: key);
 
   @override
@@ -70,19 +70,14 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
                 },
 
                 child: Container(
+                  color: colorScheme.surface,
                   padding: const EdgeInsets.all(4.0),
                   child: CircleAvatar(
                     //backgroundImage: AssetImage('assets/profile_placeholder.png'),
-                    radius: 20.0,
-                    backgroundColor: colorScheme.primaryContainer,
-                    foregroundColor: colorScheme.onPrimaryContainer,
-                    child: Text(
-                      'JD',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    radius: 18.0,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    child: Icon(Icons.person),
                   ),
                 ),
               ),

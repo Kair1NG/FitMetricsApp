@@ -29,7 +29,7 @@ class Home extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.calculate,
-                          size: 20,
+                          size: 25,
                           color: colorScheme.primary,
                         ),
                         SizedBox(width: 16),

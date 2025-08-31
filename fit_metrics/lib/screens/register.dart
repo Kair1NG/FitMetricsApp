@@ -16,7 +16,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    // final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: CommonAppBar(icon: Icons.person_add, title: 'Register'),
