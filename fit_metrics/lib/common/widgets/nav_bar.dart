@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fit_metrics/screens/home.dart';
-import 'package:fit_metrics/screens/bmiCalculatorScreen.dart';
+import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 
 // Unused
 

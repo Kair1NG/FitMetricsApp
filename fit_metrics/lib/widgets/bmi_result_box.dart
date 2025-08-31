@@ -1,3 +1,4 @@
+import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:flutter/material.dart';
 
 class BMICalculatorResultBox extends StatelessWidget {
@@ -58,9 +59,7 @@ class BMICalculatorResultBox extends StatelessWidget {
       );
     }
 
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return context.styledCard(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

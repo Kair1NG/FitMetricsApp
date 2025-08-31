@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
           onError: Colors.white,
           surface: Colors.white,
           onSurface: Colors.black87,
+          tertiary: Colors.grey,
         ),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),

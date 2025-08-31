@@ -1,6 +1,6 @@
-import 'package:fit_metrics/common/widgets/appBar.dart';
+import 'package:fit_metrics/common/helpers/container_extensions.dart';
+import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
-import 'logIn.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
@@ -9,7 +9,7 @@ class Profile extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final bool isLoggedIn = false;
+    // final bool isLoggedIn = false;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -24,159 +24,134 @@ class Profile extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Card(
-              elevation: 0,
-              surfaceTintColor: colorScheme.surfaceTint,
-              color: colorScheme.surfaceContainerLow,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(color: colorScheme.tertiary, width: 0.5),
-              ),
-              child: Container(
-                height: screenHeight * 0.1,
-                width: screenWidth * 1,
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  // placeholder info
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: colorScheme.primaryContainer,
-                      foregroundColor: colorScheme.onPrimaryContainer,
-                      child: Text(
-                        'JD',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      // Uncomment for profile image
-                      // backgroundImage: AssetImage('assets/images/profile.jpg'),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'John Doe',
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(
-                                  color: colorScheme.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            'john.doe@example.com',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                  fontSize: 12,
-                                ),
-                          ),
-                        ],
+            context.styledCard(
+              child: Row(
+                // placeholder info
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: colorScheme.primaryContainer,
+                    foregroundColor: colorScheme.onPrimaryContainer,
+                    child: Text(
+                      'JD',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    FilledButton.tonal(
-                      onPressed: () {
-                        print('Edit profile pressed');
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
-                      },
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    // Uncomment for profile image
+                    // backgroundImage: AssetImage('assets/images/profile.jpg'),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'John Doe',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                        const SizedBox(height: 3),
+                        Text(
+                          'john.doe@example.com',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
                         ),
+                      ],
+                    ),
+                  ),
+                  FilledButton.tonal(
+                    onPressed: () {
+                      print('Edit profile pressed');
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
+                    },
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Row(
-                        // for adding potential text inside edit button
-                        mainAxisSize: MainAxisSize.min,
-                        children: [Icon(Icons.edit, size: 16)],
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      // for adding potential text inside edit button
+                      mainAxisSize: MainAxisSize.min,
+                      children: [Icon(Icons.edit, size: 16)],
+                    ),
+                  ),
+                ],
               ),
             ),
             // profile card
             const SizedBox(height: 24),
 
-            Card(
-              elevation: 0,
-              surfaceTintColor: colorScheme.surfaceTint,
-              color: colorScheme.surfaceContainerLow,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: colorScheme.tertiary, width: 0.5),
-              ),
-              child: Container(
-                width: screenWidth * 0.9,
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Personal Information',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurface,
-                            fontSize: 16,
-                          ),
+            context.styledCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Personal Information',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                      fontSize: 16,
                     ),
-                    const SizedBox(height: 20),
-                    Container(
-                      // placing all info here as two columns in
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                _buildInfoTile(
-                                  context,
-                                  label: 'Age',
-                                  value: '28',
-                                  colorScheme: colorScheme,
-                                ),
-                                _buildInfoTile(
-                                  context,
-                                  label: 'Height',
-                                  value: '180 cm',
-                                  colorScheme: colorScheme,
-                                ),
-                              ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // placing all info here as two columns in a row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildInfoTile(
+                              context,
+                              label: 'Age',
+                              value: '28',
+                              colorScheme: colorScheme,
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                _buildInfoTile(
-                                  context,
-                                  label: 'Gender',
-                                  value: 'Male',
-                                  colorScheme: colorScheme,
-                                ),
-                                _buildInfoTile(
-                                  context,
-                                  label: 'Weight',
-                                  value: '75 kg',
-                                  colorScheme: colorScheme,
-                                  isLast: true,
-                                ),
-                              ],
+                            _buildInfoTile(
+                              context,
+                              label: 'Height',
+                              value: '180 cm',
+                              colorScheme: colorScheme,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildInfoTile(
+                              context,
+                              label: 'Gender',
+                              value: 'Male',
+                              colorScheme: colorScheme,
+                            ),
+                            _buildInfoTile(
+                              context,
+                              label: 'Weight',
+                              value: '75 kg',
+                              colorScheme: colorScheme,
+                              isLast: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

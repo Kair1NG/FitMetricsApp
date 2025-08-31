@@ -1,9 +1,9 @@
+import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fit_metrics/common/widgets/appBar.dart';
-import 'package:fit_metrics/common/widgets/drawer.dart';
-import 'package:fit_metrics/services/bmiCalculator.dart';
-import '../widgets/bmiResultBox.dart';
+import 'package:fit_metrics/common/widgets/app_bar.dart';
+import 'package:fit_metrics/services/bmi_calculator.dart';
+import '../widgets/bmi_result_box.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   const BMICalculatorScreen({super.key});
@@ -62,18 +62,13 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CommonAppBar(icon: Icons.calculate, title: "BMI Calculator"),
-      drawer: CommonDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+              context.styledCard(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Form(
@@ -125,14 +120,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
                           height: 48,
                           child: ElevatedButton(
                             onPressed: _calculate,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: cs.primary,
-                              foregroundColor: cs.onPrimary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 2,
-                            ),
+                            style: context.styledElevatedButton().style,
                             child: const Text('Calculate BMI'),
                           ),
                         ),
