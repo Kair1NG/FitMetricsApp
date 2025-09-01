@@ -1,5 +1,5 @@
+import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_metrics/common/widgets/appBar.dart';
 
 class WorkoutLibraryScreen extends StatelessWidget {
   const WorkoutLibraryScreen({super.key});
