@@ -1,6 +1,5 @@
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
-import 'package:fit_metrics/common/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatelessWidget {
@@ -14,8 +13,6 @@ class Profile extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: CommonAppBar(icon: Icons.person, title: 'Profile'),
-      // this needs to be back button instead of hamburger menu
-      drawer: CommonDrawer(),
       body: Container(
         margin: EdgeInsets.only(
           top: screenHeight * 0.02,
@@ -40,7 +37,7 @@ class Profile extends StatelessWidget {
                       ),
                     ),
                     // Uncomment for profile image
-                    // backgroundImage: AssetImage('assets/images/profile.jpg'),
+                    // backgroundImage: AssetImage(''),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

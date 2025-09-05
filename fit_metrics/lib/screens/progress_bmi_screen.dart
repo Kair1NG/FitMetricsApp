@@ -41,19 +41,19 @@ class ProgressBMIScreen extends StatelessWidget {
                     color: Colors.green,
                   ),
                 ),
-              Expanded(
-                child: ProgressBMIStatCard(
-                  title: "Change",
-                  value: bmiChange.toString(),
-                  color: Colors.orange,
-      ),
-    ),
-  ],
-),
+                Expanded(
+                  child: ProgressBMIStatCard(
+                    title: "Change",
+                    value: bmiChange.toString(),
+                    color: Colors.orange,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
 
             // the Chart
-            ProgressChart(entries: entries),
+            // ProgressChart(entries: entries),
             const SizedBox(height: 20),
 
             // Weekly progress list
@@ -76,4 +76,3 @@ class ProgressBMIScreen extends StatelessWidget {
     );
   }
 }
-
