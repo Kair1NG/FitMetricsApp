@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '/widgets/progress_bmi_stat_card.dart';
 import '/widgets/weekly_progress_list.dart';
 import '/widgets/progress_bmi_chart.dart';
+import 'package:fit_metrics/common/widgets/app_bar.dart';
 
 class ProgressBMIScreen extends StatelessWidget {
   const ProgressBMIScreen({super.key});
@@ -22,9 +23,9 @@ class ProgressBMIScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 20, 80, 240),
-        title: const Text("BMI Progress"),
+      appBar: const CommonAppBar(
+        title: "BMI Progress",
+        icon: Icons.show_chart,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -41,15 +42,15 @@ class ProgressBMIScreen extends StatelessWidget {
                     color: Colors.green,
                   ),
                 ),
-              Expanded(
-                child: ProgressBMIStatCard(
-                  title: "Change",
-                  value: bmiChange.toString(),
-                  color: Colors.orange,
-      ),
-    ),
-  ],
-),
+                Expanded(
+                  child: ProgressBMIStatCard(
+                    title: "Change",
+                    value: bmiChange.toString(),
+                    color: Colors.orange,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
 
             // the Chart
@@ -76,4 +77,3 @@ class ProgressBMIScreen extends StatelessWidget {
     );
   }
 }
-
