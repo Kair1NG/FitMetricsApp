@@ -53,7 +53,7 @@ class ProgressBMIScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // the Chart
-            // ProgressChart(entries: entries),
+            ProgressChart(entries: entries),
             const SizedBox(height: 20),
 
             // Weekly progress list
