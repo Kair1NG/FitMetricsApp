@@ -60,7 +60,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: cs.surface,
       appBar: CommonAppBar(icon: Icons.calculate, title: "BMI Calculator"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

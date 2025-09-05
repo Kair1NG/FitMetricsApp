@@ -1,7 +1,7 @@
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
+import 'package:fit_metrics/common/helpers/home_extentions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
-import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -13,13 +13,11 @@ class Home extends StatelessWidget {
       backgroundColor: colorScheme.surface,
       appBar: CommonAppBar(),
       drawer: CommonDrawer(),
-      body: Center(
-        // This container serves as the main content area
+      body: SingleChildScrollView(
         child: Container(
           alignment: Alignment.center,
-
-          // ALL the features within this column
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // BMI Calculator
               context.styledContainer(
@@ -48,11 +46,9 @@ class Home extends StatelessWidget {
                       height: 35,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => BMICalculatorScreen(),
-                            ),
+                            '/bmi_calculator_screen',
                           );
                         },
                         style: context.styledElevatedButton().style,
@@ -66,13 +62,67 @@ class Home extends StatelessWidget {
                 child: Column(children: [Text('Feature 2')]),
               ),
               context.styledContainer(
-                child: Column(children: [Text('Feature 3')]),
-              ),
-              context.styledContainer(
-                child: Column(children: [Text('Feature 4')]),
-              ),
-              context.styledContainer(
-                child: Column(children: [Text('Feature 5')]),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Recommended Workouts',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24),
+                    Column(
+                      children: [
+                        buildWorkoutCard(
+                          context,
+                          'Full Body Blast',
+                          'Beginner',
+                          Icons.fitness_center,
+                          Colors.blue[50]!,
+                          Colors.blue[200]!,
+                        ),
+                        SizedBox(height: 10),
+                        buildWorkoutCard(
+                          context,
+                          'Cardio Kickstart',
+                          'Beginner',
+                          Icons.directions_run,
+                          Colors.blue[50]!,
+                          Colors.blue[200]!,
+                        ),
+                        SizedBox(height: 10),
+                        buildWorkoutCard(
+                          context,
+                          'Core Strength',
+                          'Intermediate',
+                          Icons.directions_run,
+                          Colors.orange[50]!,
+                          Colors.orange[200]!,
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 35,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/recommended_workouts',
+                              );
+                            },
+                            style: context.styledElevatedButton().style,
+                            child: Text('View All Workouts'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

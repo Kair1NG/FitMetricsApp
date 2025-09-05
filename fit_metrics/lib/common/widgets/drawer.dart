@@ -1,6 +1,4 @@
-import 'package:fit_metrics/screens/register.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 
 class CommonDrawer extends StatelessWidget {
   @override
@@ -36,26 +34,25 @@ class CommonDrawer extends StatelessWidget {
           ListTile(
             title: Text('BMI Calculator'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BMICalculatorScreen()),
-              );
+              Navigator.pushNamed(context, '/bmi_calculator_screen');
             },
           ),
           ListTile(
             title: Text('Register', style: TextStyle(color: Colors.white)),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Register()),
-              );
+              Navigator.pushNamed(context, '/register');
             },
           ),
           ListTile(
             title: const Text('Recommended Workouts'),
             onTap: () {
-              Navigator.pop(context); 
-              Navigator.pushNamed(context, '/recommendedWorkouts');
+              Navigator.pushNamed(context, '/recommended_workouts');
+            },
+          ),
+          ListTile(
+            title: const Text('Progress Tracker'),
+            onTap: () {
+              Navigator.pushNamed(context, '/progress_tracker');
             },
           ),
         ],

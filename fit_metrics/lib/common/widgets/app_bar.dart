@@ -1,4 +1,3 @@
-import 'package:fit_metrics/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -63,10 +62,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Profile()),
-                  );
+                  Navigator.pushNamed(context, '/profile');
                 },
 
                 child: Container(
