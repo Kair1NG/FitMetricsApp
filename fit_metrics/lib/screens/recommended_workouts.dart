@@ -1,5 +1,6 @@
-import 'package:fit_metrics/common/widgets/app_bar.dart';
+import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:fit_metrics/common/widgets/app_bar.dart';
 
 class WorkoutLibraryScreen extends StatelessWidget {
   const WorkoutLibraryScreen({super.key});
@@ -9,10 +10,7 @@ class WorkoutLibraryScreen extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: CommonAppBar(
-        icon: Icons.person,
-        title: "Recommended Workouts",
-      ),
+      appBar: CommonAppBar(icon: Icons.person, title: "Recommended Workouts"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -45,7 +43,12 @@ class WorkoutLibraryScreen extends StatelessWidget {
               level: "Intermediate",
               description:
                   "Focused core strengthening workout to build stability and improve posture.",
-              keyExercises: ["Planks", "Russian Twists", "Bicycle Crunches", "Dead Bug"],
+              keyExercises: [
+                "Planks",
+                "Russian Twists",
+                "Bicycle Crunches",
+                "Dead Bug",
+              ],
               icon: Icons.accessibility_new,
               color: Colors.orange[50]!,
               borderColor: Colors.orange[200]!,
@@ -56,7 +59,12 @@ class WorkoutLibraryScreen extends StatelessWidget {
               level: "Intermediate",
               description:
                   "Intense upper body workout focusing on chest, back, and arms.",
-              keyExercises: ["Pull-Ups", "Bench Press", "Tricep Dips", "Push-Ups"],
+              keyExercises: [
+                "Pull-Ups",
+                "Bench Press",
+                "Tricep Dips",
+                "Push-Ups",
+              ],
               icon: Icons.sports_gymnastics,
               color: Colors.orange[50]!,
               borderColor: Colors.orange[200]!,
@@ -107,12 +115,16 @@ class WorkoutCard extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 4),
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: borderColor),
@@ -121,43 +133,44 @@ class WorkoutCard extends StatelessWidget {
                 child: Text(
                   level,
                   style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: borderColor),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: borderColor,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          Text(description,
-              style: const TextStyle(fontSize: 14, color: Colors.black87)),
+          Text(
+            description,
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             children: keyExercises
-                .map((exercise) => Chip(
-                      label: Text(exercise),
-                      backgroundColor: Colors.white,
-                      shape: StadiumBorder(
-                          side: BorderSide(color: borderColor)),
-                    ))
+                .map(
+                  (exercise) => Chip(
+                    label: Text(exercise),
+                    backgroundColor: Colors.white,
+                    shape: StadiumBorder(side: BorderSide(color: borderColor)),
+                  ),
+                )
                 .toList(),
           ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2D9CDB),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
+              style: context.styledElevatedButton().style,
               onPressed: () {},
-              child: const Text("Start Workout",
-                  style: TextStyle(fontSize: 16)),
+              child: const Text(
+                "Start Workout",
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
