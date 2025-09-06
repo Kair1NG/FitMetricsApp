@@ -5,6 +5,8 @@ import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 // Unused
 
 class CommonNavBar extends StatelessWidget {
+  const CommonNavBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(

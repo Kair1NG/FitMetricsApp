@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CommonDrawer extends StatelessWidget {
+  const CommonDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;

@@ -27,4 +27,8 @@ class BMICalculator {
     // Return an instance using private constructor
     return BMICalculator._(bmi, category);
   }
+
+  Map<String, dynamic> toJson() {
+    return {'bmi': bmi, 'category': category};
+  }
 }
