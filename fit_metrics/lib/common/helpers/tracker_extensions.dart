@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class ProgressBMIStatCard extends StatelessWidget {
+class buildStatCard extends StatelessWidget {
   final String title;
   final String value;
   final Color color;
 
-  const ProgressBMIStatCard({
+  const buildStatCard({
     super.key,
     required this.title,
     required this.value,
@@ -22,15 +22,19 @@ class ProgressBMIStatCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: const TextStyle(fontSize: 14, color: Colors.grey)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
             const SizedBox(height: 8),
-            Text(value,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                )),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
           ],
         ),
       ),

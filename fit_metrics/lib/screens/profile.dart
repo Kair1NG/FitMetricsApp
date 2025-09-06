@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: Column(
           children: [
-            context.styledCard(
+            context.styledContainer(
               child: Row(
                 children: [
                   CircleAvatar(
@@ -114,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 24),
 
-            context.styledCard(
+            context.styledContainer(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

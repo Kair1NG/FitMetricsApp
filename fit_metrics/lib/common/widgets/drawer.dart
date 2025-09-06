@@ -40,12 +40,6 @@ class CommonDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text('Register'),
-            onTap: () {
-              Navigator.pushNamed(context, '/register');
-            },
-          ),
-          ListTile(
             title: Text('Recommended Workouts'),
             onTap: () {
               Navigator.pushNamed(context, '/recommended_workouts');

@@ -37,6 +37,7 @@ dependencies:
     git:
       url: https://github.com/Kair1NG/fl_chart.git
       ref: fix-vector-math-compatibility
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
