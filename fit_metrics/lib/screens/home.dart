@@ -76,9 +76,13 @@ class _HomeState extends State<Home> {
                   Row(
                     children: [
                       Icon(
+                        
                         Icons.calculate,
+                       
                         size: 25,
+                       
                         color: colorScheme.primary,
+                      ,
                       ),
                       const SizedBox(width: 16),
                       Text(
@@ -95,14 +99,8 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     height: 35,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const BMICalculatorScreen(),
-                          ),
-                        );
-                        _loadBmi(); // refresh BMI after returning
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/bmi_calculator_screen");
                       },
                       style: context.styledElevatedButton().style,
                       child: const Text('Calculate BMI'),
@@ -133,6 +131,10 @@ class _HomeState extends State<Home> {
                           "Progress Tracker",
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
+                        Text(
+                          "Progress Tracker",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -142,12 +144,7 @@ class _HomeState extends State<Home> {
                     const SizedBox(height: 12),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ProgressBMIScreen(),
-                          ),
-                        );
+                        Navigator.pushNamed(context, '/progress_tracker');
                       },
                       child: Container(
                         width: double.infinity,
@@ -241,30 +238,15 @@ class _HomeState extends State<Home> {
                       }).toList(),
                     ),
                     const SizedBox(height: 12),
+
                     SizedBox(
-                      width: double.infinity,
+                      height: 35,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const RecommendedWorkoutsScreen(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, '/recommended_workouts');
                         },
-                        child: const Text(
-                          "View All Workouts",
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        style: context.styledElevatedButton().style,
+                        child: Text("View All Workouts"),
                       ),
                     ),
                   ],
