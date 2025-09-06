@@ -3,7 +3,6 @@ import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 import 'package:fit_metrics/screens/home.dart';
 import 'package:fit_metrics/screens/profile.dart';
 import 'package:fit_metrics/screens/progress_bmi_screen.dart';
-import 'package:fit_metrics/screens/register.dart';
 import 'package:fit_metrics/screens/recommended_workouts.dart';
 
 void main() {
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: const ColorScheme(
           brightness: Brightness.light,
-          primary: Color.fromARGB(255, 20, 80, 240),
+          primary: Color.fromARGB(200, 20, 70, 240),
           onPrimary: Colors.white,
           secondary: Color.fromARGB(255, 50, 120, 200),
           onSecondary: Colors.white,
@@ -43,7 +42,6 @@ class MyApp extends StatelessWidget {
         '/recommended_workouts': (context) => const RecommendedWorkoutsScreen(),
         '/bmi_calculator_screen': (context) => const BMICalculatorScreen(),
         '/profile': (context) => const ProfileScreen(),
-        '/register': (context) => const Register(),
         '/progress_tracker': (context) => const ProgressBMIScreen(),
       },
     );

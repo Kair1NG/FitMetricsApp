@@ -1,5 +1,5 @@
+import 'package:fit_metrics/common/helpers/tracker_extensions.dart';
 import 'package:flutter/material.dart';
-import '/widgets/progress_bmi_stat_card.dart';
 import '/widgets/weekly_progress_list.dart';
 import '/widgets/progress_bmi_chart.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
@@ -33,14 +33,14 @@ class ProgressBMIScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: ProgressBMIStatCard(
+                  child: buildStatCard(
                     title: "Current BMI",
                     value: currentBmi?.toStringAsFixed(1) ?? '-',
                     color: Colors.green,
                   ),
                 ),
                 Expanded(
-                  child: ProgressBMIStatCard(
+                  child: buildStatCard(
                     title: "Change",
                     value: bmiChange.toStringAsFixed(1),
                     color: Colors.orange,
