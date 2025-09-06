@@ -1,14 +1,42 @@
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
+import '../services/progress_bmi_service.dart';
 
-class Profile extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  double? currentBmi;
+  String? currentCategory;
+  double? currentHeight;
+  double? currentWeight;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  void _loadProfileData() {
+    final bmiService = BMIService();
+    setState(() {
+      currentBmi = bmiService.getCurrentBMI();
+      currentCategory = bmiService.getCurrentCategory();
+      currentHeight = bmiService.getCurrentHeight();
+      currentWeight = bmiService.getCurrentWeight();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    // final bool isLoggedIn = false;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -23,7 +51,6 @@ class Profile extends StatelessWidget {
           children: [
             context.styledCard(
               child: Row(
-                // placeholder info
                 children: [
                   CircleAvatar(
                     radius: 30,
@@ -36,8 +63,6 @@ class Profile extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    // Uncomment for profile image
-                    // backgroundImage: AssetImage(''),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -69,7 +94,6 @@ class Profile extends StatelessWidget {
                   FilledButton.tonal(
                     onPressed: () {
                       print('Edit profile pressed');
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
                     },
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -81,7 +105,6 @@ class Profile extends StatelessWidget {
                       ),
                     ),
                     child: Row(
-                      // for adding potential text inside edit button
                       mainAxisSize: MainAxisSize.min,
                       children: [Icon(Icons.edit, size: 16)],
                     ),
@@ -89,7 +112,6 @@ class Profile extends StatelessWidget {
                 ],
               ),
             ),
-            // profile card
             const SizedBox(height: 24),
 
             context.styledCard(
@@ -106,7 +128,7 @@ class Profile extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // placing all info here as two columns in a row
+                  // First row
                   Row(
                     children: [
                       Expanded(
@@ -115,13 +137,15 @@ class Profile extends StatelessWidget {
                             _buildInfoTile(
                               context,
                               label: 'Age',
-                              value: '28',
+                              value: '19',
                               colorScheme: colorScheme,
                             ),
                             _buildInfoTile(
                               context,
                               label: 'Height',
-                              value: '180 cm',
+                              value: currentHeight != null
+                                  ? "${currentHeight!.toStringAsFixed(0)} cm"
+                                  : 'Not set',
                               colorScheme: colorScheme,
                             ),
                           ],
@@ -139,13 +163,32 @@ class Profile extends StatelessWidget {
                             _buildInfoTile(
                               context,
                               label: 'Weight',
-                              value: '75 kg',
+                              value: currentWeight != null
+                                  ? "${currentWeight!.toStringAsFixed(0)} kg"
+                                  : 'Not set',
                               colorScheme: colorScheme,
-                              isLast: true,
                             ),
                           ],
                         ),
                       ),
+                    ],
+                  ),
+
+                  // Second row for BMI
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoTile(
+                          context,
+                          label: 'BMI',
+                          value: currentBmi != null
+                              ? "${currentBmi!.toStringAsFixed(1)} (${currentCategory ?? '-'})"
+                              : 'Not calculated',
+                          colorScheme: colorScheme,
+                          isLast: true,
+                        ),
+                      ),
+                      const Expanded(child: SizedBox()), // empty slot for 2x3
                     ],
                   ),
                 ],

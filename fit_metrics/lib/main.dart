@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 import 'package:fit_metrics/screens/home.dart';
 import 'package:fit_metrics/screens/profile.dart';
 import 'package:fit_metrics/screens/progress_bmi_screen.dart';
 import 'package:fit_metrics/screens/register.dart';
-import 'screens/recommended_workouts.dart';
-import 'package:flutter/material.dart';
+import 'package:fit_metrics/screens/recommended_workouts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,13 +38,13 @@ class MyApp extends StatelessWidget {
           fillColor: Color(0xFFF2F4F7),
         ),
       ),
-      home: Home(),
+      home: const Home(),
       routes: {
-        '/recommended_workouts': (context) => WorkoutLibraryScreen(),
-        '/bmi_calculator_screen': (context) => BMICalculatorScreen(),
-        '/profile': (context) => Profile(),
-        '/register': (context) => Register(),
-        '/progress_tracker': (context) => ProgressBMIScreen(),
+        '/recommended_workouts': (context) => const RecommendedWorkoutsScreen(),
+        '/bmi_calculator_screen': (context) => const BMICalculatorScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/register': (context) => const Register(),
+        '/progress_tracker': (context) => const ProgressBMIScreen(),
       },
     );
   }

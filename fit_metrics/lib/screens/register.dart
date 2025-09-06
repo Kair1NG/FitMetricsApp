@@ -4,6 +4,8 @@ import 'package:fit_metrics/services/profile_register.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
+  const Register({super.key});
+
   @override
   _RegisterState createState() => _RegisterState();
 }
