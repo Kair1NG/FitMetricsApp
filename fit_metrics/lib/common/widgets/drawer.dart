@@ -38,19 +38,19 @@ class CommonDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text('Register', style: TextStyle(color: Colors.white)),
+            title: Text('Register'),
             onTap: () {
               Navigator.pushNamed(context, '/register');
             },
           ),
           ListTile(
-            title: const Text('Recommended Workouts'),
+            title: Text('Recommended Workouts'),
             onTap: () {
               Navigator.pushNamed(context, '/recommended_workouts');
             },
           ),
           ListTile(
-            title: const Text('Progress Tracker'),
+            title: Text('Progress Tracker'),
             onTap: () {
               Navigator.pushNamed(context, '/progress_tracker');
             },

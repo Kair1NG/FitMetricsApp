@@ -24,13 +24,14 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: colorScheme.onPrimary,
             size: 24,
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 6),
           Text(
             title, // this title as well.
             style: TextStyle(
               fontFamily: 'ShatellSans',
               color: colorScheme.onPrimary,
               fontWeight: FontWeight.w500,
+              fontSize: 20,
             ),
           ),
         ],

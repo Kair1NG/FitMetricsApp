@@ -1,9 +1,6 @@
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
-import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
-import 'package:fit_metrics/screens/progress_bmi_screen.dart';
-import 'recommendedworkouts.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -44,14 +41,17 @@ class Home extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
             // FEATURES
             context.styledContainer(
               child: Column(
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.calculate, size: 25, color: colorScheme.primary),
+                      Icon(
+                        Icons.calculate,
+                        size: 25,
+                        color: colorScheme.primary,
+                      ),
                       const SizedBox(width: 16),
                       Text(
                         'BMI Calculator',
@@ -68,10 +68,7 @@ class Home extends StatelessWidget {
                     height: 35,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BMICalculatorScreen()),
-                        );
+                        Navigator.pushNamed(context, "/bmi_calculator_screen");
                       },
                       style: context.styledElevatedButton().style,
                       child: const Text('Calculate BMI'),
@@ -85,7 +82,9 @@ class Home extends StatelessWidget {
 
             // PROGRESS CHART
             Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -96,7 +95,10 @@ class Home extends StatelessWidget {
                       children: [
                         Icon(Icons.show_chart),
                         SizedBox(width: 8),
-                        Text("Progress Tracker", style: TextStyle(fontWeight: FontWeight.w600)),
+                        Text(
+                          "Progress Tracker",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -104,10 +106,7 @@ class Home extends StatelessWidget {
                     const SizedBox(height: 12),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ProgressBMIScreen()),
-                        );
+                        Navigator.pushNamed(context, '/progress_tracker');
                       },
                       child: Container(
                         width: double.infinity,
@@ -120,7 +119,11 @@ class Home extends StatelessWidget {
                         child: const Center(
                           child: Column(
                             children: [
-                              Icon(Icons.trending_up, color: Colors.green, size: 28),
+                              Icon(
+                                Icons.trending_up,
+                                color: Colors.green,
+                                size: 28,
+                              ),
                               SizedBox(height: 6),
                               Text(
                                 "Click to view detailed progress",
@@ -140,7 +143,9 @@ class Home extends StatelessWidget {
 
             // RECOMMENDED WORKOUTS
             Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -149,7 +154,10 @@ class Home extends StatelessWidget {
                   children: [
                     const Text(
                       "Recommended Workouts",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
 
@@ -195,29 +203,16 @@ class Home extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                  SizedBox(
-                      width: double.infinity,
+                    SizedBox(
+                      height: 35,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const WorkoutLibraryScreen()),
-                          );
+                          Navigator.pushNamed(context, '/recommended_workouts');
                         },
-                        child: const Text(
-                          "View All Workouts",
-                          style: TextStyle(
-                            color: Colors.white, 
-                          ),
-                        ),
+                        style: context.styledElevatedButton().style,
+                        child: Text("View All Workouts"),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
