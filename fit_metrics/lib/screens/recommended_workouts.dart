@@ -2,72 +2,100 @@ import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 
-class WorkoutLibraryScreen extends StatelessWidget {
-  const WorkoutLibraryScreen({super.key});
+final List<Map<String, dynamic>> allWorkoutPlans = [
+  {
+    "title": "Full Body Blast",
+    "level": "Beginner",
+    "description": "Complete full-body strength workout targeting all major muscle groups.",
+    "keyExercises": ["Squats", "Push-Ups", "Pull-Ups"],
+    "icon": Icons.fitness_center,
+    "color": Colors.blue[50]!,
+    "borderColor": Colors.blue[200]!,
+  },
+  {
+    "title": "Cardio Kickstart",
+    "level": "Beginner",
+    "description": "Low intensity cardio workout to boost heart rate and burn calories.",
+    "keyExercises": ["Jump Rope", "High Knees", "Jogging"],
+    "icon": Icons.directions_run,
+    "color": Colors.blue[50]!,
+    "borderColor": Colors.blue[200]!,
+  },
+  {
+    "title": "Core Strength",
+    "level": "Intermediate",
+    "description": "Focused core strengthening workout to build stability and improve posture.",
+    "keyExercises": ["Planks", "Russian Twists", "Bicycle Crunches", "Dead Bug"],
+    "icon": Icons.accessibility_new,
+    "color": Colors.orange[50]!,
+    "borderColor": Colors.orange[200]!,
+  },
+  {
+    "title": "Upper Body Power",
+    "level": "Intermediate",
+    "description": "Intense upper body workout focusing on chest, back, and arms.",
+    "keyExercises": ["Pull-Ups", "Bench Press", "Tricep Dips", "Push-Ups"],
+    "icon": Icons.sports_gymnastics,
+    "color": Colors.orange[50]!,
+    "borderColor": Colors.orange[200]!,
+  },
+];
 
+class WorkoutLibraryScreen extends StatelessWidget {
+  final List<String>? recommendations;
+  final String? geminiMessage;
+  WorkoutLibraryScreen({super.key, this.recommendations, this.geminiMessage});
+
+  
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    List<Map<String, dynamic>> plansToShow;
+
+    if (recommendations != null && recommendations!.isNotEmpty) {
+      plansToShow = allWorkoutPlans
+          .where((plan) => recommendations!.contains(plan["title"]))
+          .toList();
+    } else {
+      plansToShow = allWorkoutPlans;
+    }
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: CommonAppBar(icon: Icons.person, title: "Recommended Workouts"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            WorkoutCard(
-              title: "Full Body Blast",
-              level: "Beginner",
-              description:
-                  "Complete full-body strength workout targeting all major muscle groups.",
-              keyExercises: ["Squats", "Push-Ups", "Pull-Ups"],
-              icon: Icons.fitness_center,
-              color: Colors.blue[50]!,
-              borderColor: Colors.blue[200]!,
-            ),
-            const SizedBox(height: 16),
-            WorkoutCard(
-              title: "Cardio Kickstart",
-              level: "Beginner",
-              description:
-                  "Low intensity cardio workout to boost heart rate and burn calories.",
-              keyExercises: ["Jump Rope", "High Knees", "Jogging"],
-              icon: Icons.directions_run,
-              color: Colors.blue[50]!,
-              borderColor: Colors.blue[200]!,
-            ),
-
-            const SizedBox(height: 24),
-            WorkoutCard(
-              title: "Core Strength",
-              level: "Intermediate",
-              description:
-                  "Focused core strengthening workout to build stability and improve posture.",
-              keyExercises: [
-                "Planks",
-                "Russian Twists",
-                "Bicycle Crunches",
-                "Dead Bug",
-              ],
-              icon: Icons.accessibility_new,
-              color: Colors.orange[50]!,
-              borderColor: Colors.orange[200]!,
-            ),
-            const SizedBox(height: 16),
-            WorkoutCard(
-              title: "Upper Body Power",
-              level: "Intermediate",
-              description:
-                  "Intense upper body workout focusing on chest, back, and arms.",
-              keyExercises: [
-                "Pull-Ups",
-                "Bench Press",
-                "Tricep Dips",
-                "Push-Ups",
-              ],
-              icon: Icons.sports_gymnastics,
-              color: Colors.orange[50]!,
-              borderColor: Colors.orange[200]!,
+            if (geminiMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  geminiMessage!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (recommendations != null && recommendations!.isNotEmpty)
+              const SizedBox(height: 12),
+            ...plansToShow.map(
+              (plan) => Column(
+                children: [
+                  WorkoutCard(
+                    title: plan["title"],
+                    level: plan["level"],
+                    description: plan["description"],
+                    keyExercises: List<String>.from(plan["keyExercises"]),
+                    icon: plan["icon"],
+                    color: plan["color"],
+                    borderColor: plan["borderColor"],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ],
         ),
@@ -75,6 +103,7 @@ class WorkoutLibraryScreen extends StatelessWidget {
     );
   }
 }
+         
 
 class WorkoutCard extends StatelessWidget {
   final String title;

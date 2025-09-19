@@ -38,6 +38,8 @@ dependencies:
       url: https://github.com/Kair1NG/fl_chart.git
       ref: fix-vector-math-compatibility
 
+  google_generative_ai: ^0.4.7   
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
