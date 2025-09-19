@@ -4,6 +4,7 @@ import 'package:fit_metrics/screens/home.dart';
 import 'package:fit_metrics/screens/profile.dart';
 import 'package:fit_metrics/screens/progress_bmi_screen.dart';
 import 'package:fit_metrics/screens/recommended_workouts.dart';
+import 'package:fit_metrics/screens/stopwatch_test.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/bmi_calculator_screen': (context) => const BMICalculatorScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/progress_tracker': (context) => const ProgressBMIScreen(),
+        '/stopwatch': (context) => const StopwatchTestScreen(),
       },
     );
   }

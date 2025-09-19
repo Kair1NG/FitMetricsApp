@@ -141,8 +141,8 @@ class _HomeState extends State<Home> {
                         },
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.green.shade50,
-                          minimumSize: Size(double.infinity, 50),
-                          side: BorderSide(color: Colors.green),
+                          minimumSize: const Size(double.infinity, 50),
+                          side: const BorderSide(color: Colors.green),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -152,7 +152,7 @@ class _HomeState extends State<Home> {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+                            children: const [
                               Icon(
                                 Icons.trending_up,
                                 color: Colors.green,
@@ -235,7 +235,7 @@ class _HomeState extends State<Home> {
                           Navigator.pushNamed(context, '/recommended_workouts');
                         },
                         style: context.styledElevatedButton().style,
-                        child: Text("View All Workouts"),
+                        child: const Text("View All Workouts"),
                       ),
                     ),
                   ],
@@ -244,6 +244,17 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
+      ),
+
+      // FLOATING STOPWATCH BUTTON (styled with theme)
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        onPressed: () {
+          Navigator.pushNamed(context, '/stopwatch');
+        },
+        child: const Icon(Icons.timer),
       ),
     );
   }
