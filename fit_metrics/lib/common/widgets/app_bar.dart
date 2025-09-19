@@ -1,13 +1,14 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final IconData icon;
   const CommonAppBar({
-    Key? key,
+    super.key,
     this.title = "FitMetrics",
     this.icon = Icons.align_horizontal_right_rounded,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +23,20 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           Icon(
             icon, // You can change this icon,
             color: colorScheme.onPrimary,
-            size: 24,
+            size: 26,
           ),
-          SizedBox(width: 8),
-          Text(
-            title, // this title as well.
-            style: TextStyle(
-              fontFamily: 'ShatellSans',
-              color: colorScheme.onPrimary,
-              fontWeight: FontWeight.w500,
+          SizedBox(width: 6),
+          Expanded(
+            child: AutoSizeText(
+              title, // this title as well.
+              style: TextStyle(
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w500,
+                fontSize: 20,
+              ),
+              maxLines: 1,
+              minFontSize: 12,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

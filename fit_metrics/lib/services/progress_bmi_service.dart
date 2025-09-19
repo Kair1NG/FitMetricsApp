@@ -1,17 +1,40 @@
 class BMIService {
-  // Only Example, update later
-  List<Map<String, dynamic>> getWeeklyProgress() {
-    return [
-      {"week": 1, "bmi": 25.0},
-      {"week": 2, "bmi": 24.8},
-      {"week": 3, "bmi": 24.6},
-      {"week": 4, "bmi": 24.4},
-      {"week": 5, "bmi": 24.3},
-      {"week": 6, "bmi": 24.2},
-    ];
+  static final BMIService _instance = BMIService._internal();
+  factory BMIService() => _instance;
+
+  BMIService._internal();
+
+  final List<Map<String, dynamic>> _weeklyProgress = [];
+  double? _currentBmi;
+  String? _currentCategory;
+  double? _targetBmi;
+
+  double? _currentHeight;
+  double? _currentWeight;
+
+  void saveBMI(
+    Map<String, dynamic> bmiJson, {
+    double? targetBmi,
+    double? height,
+    double? weight,
+  }) {
+    _currentBmi = bmiJson['bmi'];
+    _currentCategory = bmiJson['category'];
+    _targetBmi = targetBmi ?? _targetBmi;
+    _currentHeight = height ?? _currentHeight;
+    _currentWeight = weight ?? _currentWeight;
+
+    _weeklyProgress.insert(0, {
+      "week": _weeklyProgress.length + 1,
+      "bmi": _currentBmi,
+    });
   }
 
-  double getCurrentBMI() => 24.2;
-  double getBMIChange() => -0.8;
-  double getTargetBMI() => 22.0;
+  double? getCurrentBMI() => _currentBmi;
+  String? getCurrentCategory() => _currentCategory;
+  double? getTargetBMI() => _targetBmi;
+  double? getCurrentHeight() => _currentHeight;
+  double? getCurrentWeight() => _currentWeight;
+
+  List<Map<String, dynamic>> getWeeklyProgress() => _weeklyProgress;
 }

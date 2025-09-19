@@ -1,12 +1,34 @@
+import 'package:flutter/material.dart';
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
-import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
-import 'package:fit_metrics/screens/progress_bmi_screen.dart';
-import 'recommendedworkouts.dart';
-import 'package:flutter/material.dart';
+import '../services/progress_bmi_service.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  double? currentBmi;
+  String? currentCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBmi();
+  }
+
+  void _loadBmi() {
+    final bmiService = BMIService();
+    setState(() {
+      currentBmi = bmiService.getCurrentBMI();
+      currentCategory = bmiService.getCurrentCategory();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -16,6 +38,7 @@ class Home extends StatelessWidget {
         "title": "Full Body Blast",
         "level": "Beginner",
         "icon": Icons.fitness_center,
+        "icon_color": Colors.blue[500],
         "color": Colors.blue[50],
         "border": Colors.blue[200],
       },
@@ -23,6 +46,7 @@ class Home extends StatelessWidget {
         "title": "Cardio Kickstart",
         "level": "Beginner",
         "icon": Icons.directions_run,
+        "icon_color": Colors.blue[500],
         "color": Colors.blue[50],
         "border": Colors.blue[200],
       },
@@ -30,6 +54,7 @@ class Home extends StatelessWidget {
         "title": "Core Strength",
         "level": "Intermediate",
         "icon": Icons.accessibility_new,
+        "icon_color": Colors.orange[500],
         "color": Colors.orange[50],
         "border": Colors.orange[200],
       },
@@ -37,90 +62,102 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: CommonAppBar(),
-      drawer: CommonDrawer(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            
-            // FEATURES
-            context.styledContainer(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.calculate, size: 25, color: colorScheme.primary),
-                      const SizedBox(width: 16),
-                      Text(
-                        'BMI Calculator',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface,
+      appBar: const CommonAppBar(),
+      drawer: const CommonDrawer(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // FEATURES
+              context.styledContainer(
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.calculate,
+                          size: 25,
+                          color: colorScheme.primary,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    height: 35,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BMICalculatorScreen()),
-                        );
-                      },
-                      style: context.styledElevatedButton().style,
-                      child: const Text('Calculate BMI'),
+                        const SizedBox(width: 16),
+                        Text(
+                          'BMI Calculator',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      height: 35,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            "/bmi_calculator_screen",
+                          );
+                        },
+                        style: context.styledElevatedButton().style,
+                        child: const Text('Calculate BMI'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // PROGRESS CHART
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+              // PROGRESS CHART
+              context.styledContainer(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.show_chart),
+                        Icon(Icons.trending_up, color: Colors.green),
                         SizedBox(width: 8),
-                        Text("Progress Tracker", style: TextStyle(fontWeight: FontWeight.w600)),
+                        Text(
+                          "Progress Tracker",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text("Current BMI: 24.5"),
+                    Text(
+                      "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(1) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
+                    ),
                     const SizedBox(height: 12),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ProgressBMIScreen()),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.green.shade200),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 120,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/progress_tracker');
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.green.shade50,
+                          minimumSize: const Size(double.infinity, 50),
+                          side: const BorderSide(color: Colors.green),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Column(
-                            children: [
-                              Icon(Icons.trending_up, color: Colors.green, size: 28),
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.trending_up,
+                                color: Colors.green,
+                                size: 28,
+                              ),
                               SizedBox(height: 6),
                               Text(
                                 "Click to view detailed progress",
@@ -134,25 +171,22 @@ class Home extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // RECOMMENDED WORKOUTS
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
+              // RECOMMENDED WORKOUTS
+              context.styledContainer(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       "Recommended Workouts",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
-
                     Column(
                       children: workouts.map((w) {
                         return Container(
@@ -165,7 +199,7 @@ class Home extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(w["icon"], size: 20, color: Colors.black54),
+                              Icon(w["icon"], size: 20, color: w['icon_color']),
                               const SizedBox(width: 8),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,38 +226,35 @@ class Home extends StatelessWidget {
                         );
                       }).toList(),
                     ),
-
                     const SizedBox(height: 12),
 
-                  SizedBox(
-                      width: double.infinity,
+                    SizedBox(
+                      height: 35,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const WorkoutLibraryScreen()),
-                          );
+                          Navigator.pushNamed(context, '/recommended_workouts');
                         },
-                        child: const Text(
-                          "View All Workouts",
-                          style: TextStyle(
-                            color: Colors.white, 
-                          ),
-                        ),
+                        style: context.styledElevatedButton().style,
+                        child: const Text("View All Workouts"),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+
+      // FLOATING STOPWATCH BUTTON (styled with theme)
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        onPressed: () {
+          Navigator.pushNamed(context, '/stopwatch');
+        },
+        child: const Icon(Icons.timer),
       ),
     );
   }

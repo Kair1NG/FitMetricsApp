@@ -9,8 +9,6 @@ extension ContainerExtensions on BuildContext {
     EdgeInsetsGeometry? padding,
     double? borderRadius,
   }) {
-    // final screenHeight = MediaQuery.of(this).size.height;
-    final screenWidth = MediaQuery.of(this).size.width;
     final ColorScheme colorScheme = Theme.of(this).colorScheme;
 
     return Card(
@@ -21,8 +19,7 @@ extension ContainerExtensions on BuildContext {
       ),
       child: Container(
         padding: padding ?? EdgeInsets.all(16),
-        width: width ?? screenWidth * 0.9,
-        // height: height ?? screenHeight * 0.1,
+        width: double.infinity,
         child: child,
       ),
     );
@@ -35,21 +32,18 @@ extension ContainerExtensions on BuildContext {
     EdgeInsetsGeometry? margin,
     EdgeInsetsGeometry? padding,
   }) {
-    //final screenHeight = MediaQuery.of(this).size.height;
-    final screenWidth = MediaQuery.of(this).size.width;
     final ColorScheme colorScheme = Theme.of(this).colorScheme;
 
     return Container(
       padding: padding ?? EdgeInsets.all(20),
       margin: margin ?? EdgeInsets.only(top: 20),
-      width: width ?? screenWidth * 0.9,
-      //height: height ?? screenHeight * 0.1,
+      width: double.infinity,
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.onSurface.withOpacity(0.2),
+            color: colorScheme.onSurface.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 3,
             offset: Offset(0, 3),

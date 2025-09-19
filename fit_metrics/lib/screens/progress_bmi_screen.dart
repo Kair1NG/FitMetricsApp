@@ -1,32 +1,29 @@
+import 'package:fit_metrics/common/helpers/tracker_extensions.dart';
 import 'package:flutter/material.dart';
-import '/widgets/progress_bmi_stat_card.dart';
 import '/widgets/weekly_progress_list.dart';
 import '/widgets/progress_bmi_chart.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
+import 'package:fit_metrics/services/progress_bmi_service.dart';
 
 class ProgressBMIScreen extends StatelessWidget {
   const ProgressBMIScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // try
-    final double currentBmi = 24.5;
-    final double bmiChange = -1.7;
-    final double targetBmi = 22.5;
-    final List<Map<String, dynamic>> entries = [
-      {"week": 6, "bmi": 24.5},
-      {"week": 5, "bmi": 24.8},
-      {"week": 4, "bmi": 25.1},
-      {"week": 3, "bmi": 25.5},
-      {"week": 2, "bmi": 25.8},
-      {"week": 1, "bmi": 26.2},
-    ];
+    final bmiService = BMIService();
+
+    final double? currentBmi = bmiService.getCurrentBMI();
+    final double? targetBmi = bmiService.getTargetBMI();
+
+    // Get weekly progress directly from service
+    final List<Map<String, dynamic>> entries = bmiService.getWeeklyProgress();
+
+    final double bmiChange = (entries.length > 1)
+        ? entries.first['bmi'] - entries.last['bmi']
+        : 0.0;
 
     return Scaffold(
-      appBar: const CommonAppBar(
-        title: "BMI Progress",
-        icon: Icons.show_chart,
-      ),
+      appBar: const CommonAppBar(title: "BMI Progress", icon: Icons.show_chart),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -36,16 +33,16 @@ class ProgressBMIScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: ProgressBMIStatCard(
+                  child: buildStatCard(
                     title: "Current BMI",
-                    value: currentBmi.toString(),
+                    value: currentBmi?.toStringAsFixed(1) ?? '-',
                     color: Colors.green,
                   ),
                 ),
                 Expanded(
-                  child: ProgressBMIStatCard(
+                  child: buildStatCard(
                     title: "Change",
-                    value: bmiChange.toString(),
+                    value: bmiChange.toStringAsFixed(1),
                     color: Colors.orange,
                   ),
                 ),
@@ -53,7 +50,7 @@ class ProgressBMIScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // the Chart
+            // Chart
             ProgressChart(entries: entries),
             const SizedBox(height: 20),
 
@@ -64,7 +61,7 @@ class ProgressBMIScreen extends StatelessWidget {
             // Goal
             Center(
               child: Text(
-                "Your Goal: $targetBmi",
+                "Your Goal: ${targetBmi?.toStringAsFixed(1) ?? '-'}",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
