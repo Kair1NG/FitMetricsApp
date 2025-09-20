@@ -13,7 +13,7 @@ class StopwatchTestScreen extends StatefulWidget {
 }
 
 class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
-  // steps list some are rep based some are time based
+  // steps list: some are rep-based, some are time-based
   final List<Map<String, dynamic>> _steps = [
     {
       'type': 'workout',
@@ -58,7 +58,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
   int _remaining = 0; // seconds left for active phase
   int _totalTimeSec = 0; // total time spent in active steps
   int _totalCalories = 0;
-  String _phase = 'idle'; // idle prep workout rest
+  String _phase = 'idle'; // idle | prep | workout | rest
   Timer? _ticker;
   bool _isRunning = false;
 
@@ -69,13 +69,13 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
   @override
   void initState() {
     super.initState();
-    // set first step no auto start
+    // set first step, no auto start
     _setupCurrentStep(startAutomatically: false);
   }
 
   @override
   void dispose() {
-    // cancel timer to avoid spam after dispose
+    // cancel timer to avoid leaks
     _ticker?.cancel();
     super.dispose();
   }
@@ -93,7 +93,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
       _phase = 'prep';
       _remaining = prepSeconds;
     } else {
-      // rep based workout user taps next manually
+      // rep-based workout, user taps next manually
       _phase = 'idle';
       _remaining = 0;
       _isRunning = false;
@@ -110,9 +110,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
 
   // main countdown loop
   void _startCountdownLoop() {
-    if (_ticker != null && _ticker!.isActive) {
-      return; // dont create duplicate timer
-    }
+    if (_ticker != null && _ticker!.isActive) return; // avoid duplicate timer
 
     _ticker = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!_isRunning) return;
@@ -136,7 +134,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
     final step = _steps[_currentIndex];
 
     if (_phase == 'prep') {
-      // prep finished now real workout
+      // prep finished, now real workout
       _phase = 'workout';
       _remaining = (step['duration'] as int);
       _isRunning = true;
@@ -166,6 +164,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
     if (_phase == 'idle' &&
         step['type'] == 'workout' &&
         !step.containsKey('duration')) {
+      // rep-based workout done manually
       if (step.containsKey('calories')) {
         _totalCalories += (step['calories'] as int);
       }
@@ -228,19 +227,15 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
     );
   }
 
-  // helper format seconds to mmss
-  String _formatTime(int sec) {
-    final m = (sec ~/ 60).toString().padLeft(2, '0');
-    final s = (sec % 60).toString().padLeft(2, '0');
-    return '$m:$s';
-  }
+  // helper: format seconds to mm:ss
+  String _formatTime(int sec) =>
+      "${(sec ~/ 60).toString().padLeft(2, '0')}:${(sec % 60).toString().padLeft(2, '0')}";
 
   @override
   Widget build(BuildContext context) {
     final step = _steps[_currentIndex];
     final colorScheme = Theme.of(context).colorScheme;
     final progressValue = (_currentIndex + 1) / _steps.length;
-
     final showClock =
         _phase == 'prep' || _phase == 'workout' || _phase == 'rest';
 
@@ -267,7 +262,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // progress bar
+                      // top progress bar
                       LinearProgressIndicator(
                         value: progressValue,
                         minHeight: 8,
@@ -279,6 +274,7 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
+                      // step count + phase text
                       Row(
                         children: [
                           Text(
@@ -303,7 +299,6 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
                         ],
                       ),
                       const SizedBox(height: 12),
-
                       // main card with content
                       context.styledContainer(
                         child: Column(
@@ -375,10 +370,13 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
                                         children: [
                                           Text(
                                             _phase == 'prep'
-                                                ? "Get Ready"
+                                                ? "Get Ready!"
                                                 : _phase == 'rest'
-                                                ? "Rest"
-                                                : "Time Left",
+                                                ? "Catch your Breath!"
+                                                : "Push Hard!",
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
@@ -407,10 +405,9 @@ class _StopwatchTestScreenState extends State<StopwatchTestScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  const Text("tap next when done"),
+                                  const Text("Tap Next when done! Keep going!"),
                                 ],
                               ),
-
                             const SizedBox(height: 18),
 
                             // buttons row
@@ -498,6 +495,7 @@ class _SummaryScreen extends StatelessWidget {
     required this.steps,
   });
 
+  // helper: format seconds to mm:ss
   String _formatTime(int sec) =>
       "${(sec ~/ 60).toString().padLeft(2, '0')}:${(sec % 60).toString().padLeft(2, '0')}";
 
@@ -524,12 +522,13 @@ class _SummaryScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  "good job",
+                  "Amazing Job!",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "you finished the test routine",
+                  "You crushed the workout today! Keep the energy up!",
                   style: TextStyle(color: colorScheme.tertiary),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -565,7 +564,7 @@ class _SummaryScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            "workouts done",
+            "Workouts Completed",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
@@ -579,7 +578,7 @@ class _SummaryScreen extends StatelessWidget {
                     child: Icon(w['icon'] ?? Icons.fitness_center),
                   ),
                   title: Text(w['name']),
-                  subtitle: Text("target ${w['target'] ?? 'general'}"),
+                  subtitle: Text("Target: ${w['target'] ?? 'general'}"),
                   trailing: Text(
                     w['reps'] != null
                         ? "${w['reps']} reps"
@@ -589,21 +588,31 @@ class _SummaryScreen extends StatelessWidget {
               ),
             ),
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const StopwatchTestScreen()),
-            ),
-            style: context.styledElevatedButton().style,
-            child: const Text("Restart Test"),
-          ),
-          ElevatedButton(
-            onPressed: () =>
-                Navigator.popUntil(context, (route) => route.isFirst),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.tertiary,
-            ),
-            child: const Text("Back to Home"),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const StopwatchTestScreen(),
+                    ),
+                  ),
+                  style: context.styledElevatedButton().style,
+                  child: const Text("Restart Test"),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () =>
+                      Navigator.popUntil(context, (route) => route.isFirst),
+                  style: context.styledElevatedButton().style,
+                  child: const Text("Back to Home"),
+                ),
+              ),
+            ],
           ),
         ],
       ),
