@@ -38,6 +38,8 @@ dependencies:
       url: https://github.com/Kair1NG/fl_chart.git
       ref: fix-vector-math-compatibility
   auto_size_text: ^3.0.0
+  firebase_core: ^4.1.0
+  firebase_auth: ^6.0.2
 
 dev_dependencies:
   flutter_test:

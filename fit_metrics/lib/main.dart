@@ -4,8 +4,12 @@ import 'package:fit_metrics/screens/home.dart';
 import 'package:fit_metrics/screens/profile.dart';
 import 'package:fit_metrics/screens/progress_bmi_screen.dart';
 import 'package:fit_metrics/screens/recommended_workouts.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
