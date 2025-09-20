@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/services/bmi_calculator.dart';
 import '../widgets/bmi_result_box.dart';
+import '../services/gemini_service.dart';
+import 'recommended_workouts.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   const BMICalculatorScreen({super.key});
@@ -17,8 +19,11 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
+  final GeminiService _gemini = GeminiService("AIzaSyDsOyQpThc-oWNt4KLbOTe40CITIG-q68A");
+
   double? _bmi;
   String? _category;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -41,20 +46,43 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     return null;
   }
 
-  void _calculate() {
-    FocusScope.of(context).unfocus();
-    if (!_formKey.currentState!.validate()) return;
+  void _calculate() async {
+  FocusScope.of(context).unfocus();
+  if (!_formKey.currentState!.validate()) return;
 
-    final h = double.parse(_heightController.text.trim());
-    final w = double.parse(_weightController.text.trim());
-    final result = BMICalculator.calculate(heightCm: h, weightKg: w);
+  final h = double.parse(_heightController.text.trim());
+  final w = double.parse(_weightController.text.trim());
+  final result = BMICalculator.calculate(heightCm: h, weightKg: w);
 
-    setState(() {
-      _bmi = result.bmi;
-      _category = result.category;
-    });
-  }
+  setState(() {
+    _bmi = result.bmi;
+    _category = result.category;
+    _loading = true;
+  });
 
+  final recs = await _gemini.getWorkoutRecommendations(_bmi!);
+
+  await Future.delayed(const Duration(seconds: 3));
+
+  setState(() {
+    _loading = false;
+  });
+
+  if (!mounted) return;
+
+  final String? messageLine = recs["message"];
+  final List<String> titles = List<String>.from(recs["titles"] ?? []);
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => WorkoutLibraryScreen(
+        recommendations: titles,
+        geminiMessage: messageLine,
+      ),
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
