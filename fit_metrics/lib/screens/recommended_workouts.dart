@@ -1,206 +1,306 @@
-import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_metrics/common/widgets/app_bar.dart';
+import 'package:fit_metrics/services/workout_data.dart';
+import 'package:fit_metrics/screens/workout_details_screen.dart';
+import 'package:fit_metrics/assets/photo_assets_data.dart';
 
-final List<Map<String, dynamic>> allWorkoutPlans = [
-  {
-    "title": "Full Body Blast",
-    "level": "Beginner",
-    "description": "Complete full-body strength workout targeting all major muscle groups.",
-    "keyExercises": ["Squats", "Push-Ups", "Pull-Ups"],
-    "icon": Icons.fitness_center,
-    "color": Colors.blue[50]!,
-    "borderColor": Colors.blue[200]!,
-  },
-  {
-    "title": "Cardio Kickstart",
-    "level": "Beginner",
-    "description": "Low intensity cardio workout to boost heart rate and burn calories.",
-    "keyExercises": ["Jump Rope", "High Knees", "Jogging"],
-    "icon": Icons.directions_run,
-    "color": Colors.blue[50]!,
-    "borderColor": Colors.blue[200]!,
-  },
-  {
-    "title": "Core Strength",
-    "level": "Intermediate",
-    "description": "Focused core strengthening workout to build stability and improve posture.",
-    "keyExercises": ["Planks", "Russian Twists", "Bicycle Crunches", "Dead Bug"],
-    "icon": Icons.accessibility_new,
-    "color": Colors.orange[50]!,
-    "borderColor": Colors.orange[200]!,
-  },
-  {
-    "title": "Upper Body Power",
-    "level": "Intermediate",
-    "description": "Intense upper body workout focusing on chest, back, and arms.",
-    "keyExercises": ["Pull-Ups", "Bench Press", "Tricep Dips", "Push-Ups"],
-    "icon": Icons.sports_gymnastics,
-    "color": Colors.orange[50]!,
-    "borderColor": Colors.orange[200]!,
-  },
-];
+class WorkoutLibraryScreen extends StatefulWidget {
+  final String geminiMessage;
+  final List<String> recommendations;
 
-class WorkoutLibraryScreen extends StatelessWidget {
-  final List<String>? recommendations;
-  final String? geminiMessage;
-  WorkoutLibraryScreen({super.key, this.recommendations, this.geminiMessage});
+  const WorkoutLibraryScreen({
+    super.key,
+    required this.geminiMessage,
+    required this.recommendations,
+  });
 
-  
+  const WorkoutLibraryScreen.all({super.key})
+      : geminiMessage = "Explore all available workouts!",
+        recommendations = const [];
+
+  @override
+  State<WorkoutLibraryScreen> createState() => _WorkoutLibraryScreenState();
+}
+
+class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
+  String activeFilter = "All";
+
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    List<Map<String, dynamic>> plansToShow;
+    final recommendedSet = widget.recommendations.toSet();
 
-    if (recommendations != null && recommendations!.isNotEmpty) {
-      plansToShow = allWorkoutPlans
-          .where((plan) => recommendations!.contains(plan["title"]))
-          .toList();
-    } else {
-      plansToShow = allWorkoutPlans;
+    List<Map<String, dynamic>> plans = widget.recommendations.isNotEmpty
+        ? allWorkoutPlans
+            .where((plan) => recommendedSet.contains(plan['title']))
+            .toList()
+        : allWorkoutPlans;
+    if (activeFilter == "Beginner" || activeFilter == "Intermediate" || activeFilter == "Advanced") {
+      plans = plans.where((p) => p["level"] == activeFilter).toList();
     }
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: CommonAppBar(icon: Icons.person, title: "Recommended Workouts"),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (geminiMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  geminiMessage!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+      appBar: AppBar(
+        title: const Text("Workout Library"),
+        centerTitle: true,
+        backgroundColor: Colors.blue.shade700,
+      ),
+      body: Column(
+        children: [
+          if (widget.geminiMessage.isNotEmpty)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              color: Colors.blue.shade50,
+              child: Text(
+                widget.geminiMessage,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
-              ),
-            if (recommendations != null && recommendations!.isNotEmpty)
-              const SizedBox(height: 12),
-            ...plansToShow.map(
-              (plan) => Column(
-                children: [
-                  WorkoutCard(
-                    title: plan["title"],
-                    level: plan["level"],
-                    description: plan["description"],
-                    keyExercises: List<String>.from(plan["keyExercises"]),
-                    icon: plan["icon"],
-                    color: plan["color"],
-                    borderColor: plan["borderColor"],
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                textAlign: TextAlign.center,
               ),
             ),
-          ],
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              border: Border(
+                bottom: BorderSide(color: Colors.grey.shade300),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildFilterButton("All"),
+                _buildFilterButton("Beginner"),
+                _buildFilterButton("Intermediate"),
+                _buildFilterButton("Advanced"),
+              ],
+            ),
+          ),
+
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: plans.length,
+              itemBuilder: (context, index) {
+                final plan = plans[index];
+                return _WorkoutCard(plan: plan);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(String label) {
+    final bool isActive = activeFilter == label;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          activeFilter = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive ? Colors.blue.shade700 : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? Colors.blue.shade700 : Colors.grey.shade400,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isActive ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
   }
 }
-         
 
-class WorkoutCard extends StatelessWidget {
-  final String title;
-  final String level;
-  final String description;
-  final List<String> keyExercises;
-  final IconData icon;
-  final Color color;
-  final Color borderColor;
+class _WorkoutCard extends StatelessWidget {
+  final Map<String, dynamic> plan;
 
-  const WorkoutCard({
-    super.key,
-    required this.title,
-    required this.level,
-    required this.description,
-    required this.keyExercises,
-    required this.icon,
-    required this.color,
-    required this.borderColor,
-  });
+  const _WorkoutCard({required this.plan});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor, width: 1.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WorkoutDetailsScreen(
+              title: plan["title"],
+              duration: plan["duration"],
+              intensity: plan["level"],
+              exercises: (plan["exercises"] as List<dynamic>).map((e) {
+                return {
+                  "name": e,
+                  "reps": "15 Reps", // you can customize per exercise later
+                  "image": PhotoAssetsData.placeholder, // temp fallback
+                };
+              }).toList(),
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: plan["color"] ?? Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border:
+              Border.all(color: plan["borderColor"] ?? Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: Colors.black54, size: 28),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(plan["icon"], size: 28, color: Colors.blue.shade700),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          plan["title"],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: plan["level"] == "Beginner"
+                                ? Colors.green.shade100
+                                : plan["level"] == "Intermediate"
+                                    ? Colors.orange.shade100
+                                    : Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            plan["level"],
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: plan["level"] == "Beginner"
+                                  ? Colors.green.shade800
+                                  : plan["level"] == "Intermediate"
+                                      ? Colors.orange.shade800
+                                      : Colors.red.shade800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: borderColor),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  level,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: borderColor,
+              const SizedBox(height: 8),
+              Text(
+                plan["description"],
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(Icons.timer, size: 18, color: Colors.grey.shade800),
+                  const SizedBox(width: 6),
+                  Text("${plan["duration"]} min",
+                      style: const TextStyle(fontWeight: FontWeight.w500)),
+                  const SizedBox(width: 16),
+                  Icon(Icons.fitness_center,
+                      size: 18, color: Colors.grey.shade800),
+                  const SizedBox(width: 6),
+                  Text(plan["equipment"],
+                      style:
+                          const TextStyle(fontWeight: FontWeight.w500)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: (plan["exercises"] as List<dynamic>)
+                    .map((e) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: plan["borderColor"] ??
+                                    Colors.grey.shade300),
+                          ),
+                          child: Text(
+                            e,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => WorkoutDetailsScreen(
+                          title: plan["title"],
+                          duration: plan["duration"],
+                          intensity: plan["level"],
+                          exercises: (plan["exercises"] as List<dynamic>)
+                              .map((e) {
+                            return {
+                              "name": e,
+                              "reps": "15 Reps",
+                              "image": PhotoAssetsData.placeholder,
+                            };
+                          }).toList(),
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Start Workout",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            description,
-            style: const TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            children: keyExercises
-                .map(
-                  (exercise) => Chip(
-                    label: Text(exercise),
-                    backgroundColor: Colors.white,
-                    shape: StadiumBorder(side: BorderSide(color: borderColor)),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: context.styledElevatedButton().style,
-              onPressed: () {},
-              child: const Text(
-                "Start Workout",
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

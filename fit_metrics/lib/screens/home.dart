@@ -3,10 +3,12 @@ import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
 import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 import 'package:fit_metrics/screens/progress_bmi_screen.dart';
-import 'recommendedworkouts.dart';
+import 'recommended_workouts.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
+  const Home({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -207,7 +209,7 @@ class Home extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const WorkoutLibraryScreen()),
+                            MaterialPageRoute(builder: (context) => const WorkoutLibraryScreen.all()),
                           );
                         },
                         child: const Text(
