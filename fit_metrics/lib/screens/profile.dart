@@ -93,7 +93,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   FilledButton.tonal(
                     onPressed: () {
-                      print('Edit profile pressed');
+                      debugPrint(
+                        'Edit profile pressed',
+                      ); // Replaced print with debugPrint
                     },
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -182,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           label: 'BMI',
                           value: currentBmi != null
-                              ? "${currentBmi!.toStringAsFixed(1)} (${currentCategory ?? '-'})"
+                              ? "${currentBmi!.toStringAsFixed(2)} (${currentCategory ?? '-'})"
                               : 'Not calculated',
                           colorScheme: colorScheme,
                           isLast: true,

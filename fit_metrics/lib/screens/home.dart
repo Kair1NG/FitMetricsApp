@@ -96,11 +96,12 @@ class _HomeState extends State<Home> {
                     SizedBox(
                       height: 35,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
+                        onPressed: () async {
+                          await Navigator.pushNamed(
                             context,
                             "/bmi_calculator_screen",
                           );
+                          _loadBmi(); // refresh after returning
                         },
                         style: context.styledElevatedButton().style,
                         child: const Text('Calculate BMI'),
@@ -129,7 +130,7 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(1) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
+                      "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(2) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
@@ -244,17 +245,6 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-      ),
-
-      // FLOATING STOPWATCH BUTTON (styled with theme)
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        onPressed: () {
-          Navigator.pushNamed(context, '/stopwatch');
-        },
-        child: const Icon(Icons.timer),
       ),
     );
   }

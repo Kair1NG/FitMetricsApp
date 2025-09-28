@@ -54,18 +54,31 @@ extension ContainerExtensions on BuildContext {
     );
   }
 
-  ElevatedButton styledElevatedButton() {
+  /// Now accepts optional child and onPressed
+  /// If no child provided, returns a default ElevatedButton so existing
+  /// calls like `context.styledElevatedButton().style` continue to work also
+  ElevatedButton styledElevatedButton({
+    Widget? child,
+    VoidCallback? onPressed,
+    ButtonStyle? style,
+  }) {
     final ColorScheme colorScheme = Theme.of(this).colorScheme;
+    final ButtonStyle resolvedStyle =
+        style ??
+        ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        );
+
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        minimumSize: Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 2,
-      ),
-      onPressed: () {},
-      child: Text('Styled Button'),
+      style: resolvedStyle,
+      onPressed: onPressed ?? () {},
+      child: child ?? const Text('Styled Button'),
     );
   }
 }

@@ -18,7 +18,12 @@ class BMIService {
     double? height,
     double? weight,
   }) {
-    _currentBmi = bmiJson['bmi'];
+    _currentBmi = double.parse(
+      bmiJson['bmi'].toString(),
+    ); // convert string → double
+    _currentBmi = double.parse(
+      _currentBmi!.toStringAsFixed(2),
+    ); // enforce 2 decimals
     _currentCategory = bmiJson['category'];
     _targetBmi = targetBmi ?? _targetBmi;
     _currentHeight = height ?? _currentHeight;
