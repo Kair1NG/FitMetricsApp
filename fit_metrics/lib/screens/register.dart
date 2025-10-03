@@ -4,15 +4,28 @@ import 'package:fit_metrics/services/profile_register.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
+  const Register({
+    super.key,
+  }); // Added super.key to fix use_key_in_widget_constructors
+
   @override
-  _RegisterState createState() => _RegisterState();
+  RegisterState createState() => RegisterState(); // Made state class public to fix library_private_types_in_public_api
 }
 
-class _RegisterState extends State<Register> {
+class RegisterState extends State<Register> {
+  // Renamed from _RegisterState to public RegisterState
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,16 +9,17 @@ class WeeklyProgressList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount: entries.length,
-      shrinkWrap: true, 
+      shrinkWrap: true,
       //scrolling fix?
-      physics: const NeverScrollableScrollPhysics(), 
+      physics: const NeverScrollableScrollPhysics(),
       separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final entry = entries[index];
+        final bmi = (entry["bmi"] as double).toStringAsFixed(2);
         return ListTile(
           leading: const Icon(Icons.fitness_center, color: Colors.blue),
           title: Text("Week ${entry["week"]}"),
-          trailing: Text("BMI: ${entry["bmi"]}"),
+          trailing: Text("BMI: $bmi"),
         );
       },
     );

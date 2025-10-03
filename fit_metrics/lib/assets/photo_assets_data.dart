@@ -5,7 +5,7 @@ class PhotoAssetsData {
   static const String placeholder = 'assets/images/placeholder.jpg';
 
   // Banner / header images
-  static const String banner = 'assets/images/workout_banner.jpg';
+  static const String banner = 'assets/images/banner.png';
 
   // Exercise images (for use across various workout screens. Just examples, can be updated if needed)
   static const String sidePlank = 'assets/images/side_plank.jpg';

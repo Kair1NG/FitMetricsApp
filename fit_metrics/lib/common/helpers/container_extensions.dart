@@ -9,8 +9,6 @@ extension ContainerExtensions on BuildContext {
     EdgeInsetsGeometry? padding,
     double? borderRadius,
   }) {
-    // final screenHeight = MediaQuery.of(this).size.height;
-    final screenWidth = MediaQuery.of(this).size.width;
     final ColorScheme colorScheme = Theme.of(this).colorScheme;
 
     return Card(
@@ -21,8 +19,7 @@ extension ContainerExtensions on BuildContext {
       ),
       child: Container(
         padding: padding ?? EdgeInsets.all(16),
-        width: width ?? screenWidth * 0.9,
-        // height: height ?? screenHeight * 0.1,
+        width: double.infinity,
         child: child,
       ),
     );
@@ -35,21 +32,18 @@ extension ContainerExtensions on BuildContext {
     EdgeInsetsGeometry? margin,
     EdgeInsetsGeometry? padding,
   }) {
-    //final screenHeight = MediaQuery.of(this).size.height;
-    final screenWidth = MediaQuery.of(this).size.width;
     final ColorScheme colorScheme = Theme.of(this).colorScheme;
 
     return Container(
       padding: padding ?? EdgeInsets.all(20),
       margin: margin ?? EdgeInsets.only(top: 20),
-      width: width ?? screenWidth * 0.9,
-      //height: height ?? screenHeight * 0.1,
+      width: double.infinity,
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.onSurface.withOpacity(0.2),
+            color: colorScheme.onSurface.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 3,
             offset: Offset(0, 3),
@@ -60,18 +54,31 @@ extension ContainerExtensions on BuildContext {
     );
   }
 
-  ElevatedButton styledElevatedButton() {
+  /// Now accepts optional child and onPressed
+  /// If no child provided, returns a default ElevatedButton so existing
+  /// calls like `context.styledElevatedButton().style` continue to work also
+  ElevatedButton styledElevatedButton({
+    Widget? child,
+    VoidCallback? onPressed,
+    ButtonStyle? style,
+  }) {
     final ColorScheme colorScheme = Theme.of(this).colorScheme;
+    final ButtonStyle resolvedStyle =
+        style ??
+        ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        );
+
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        minimumSize: Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 2,
-      ),
-      onPressed: () {},
-      child: Text('Styled Button'),
+      style: resolvedStyle,
+      onPressed: onPressed ?? () {},
+      child: child ?? const Text('Styled Button'),
     );
   }
 }

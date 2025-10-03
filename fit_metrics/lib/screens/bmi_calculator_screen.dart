@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/services/bmi_calculator.dart';
 import '../widgets/bmi_result_box.dart';
+import '../services/progress_bmi_service.dart';
 import '../services/gemini_service.dart';
 import 'recommended_workouts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -53,7 +54,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState!.validate()) {
-      print("❌ Validation failed");
+      debugPrint("❌ Validation failed"); // Replaced print with debugPrint
       return;
     }
 
@@ -65,6 +66,38 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       _bmi = result.bmi;
       _category = result.category;
       _loading = true;
+    });
+
+    // Save BMI + progress tracking (your code)
+    final bmiJson = result.toJson();
+    final bmiService = BMIService();
+    bmiService.saveBMI(bmiJson, targetBmi: 22.0, height: h, weight: w);
+
+    debugPrint(
+      "✅ BMI calculated: $_bmi ($_category)",
+    ); // Replaced print with debugPrint
+
+    Map<String, dynamic> recs;
+
+    try {
+      recs = await _gemini.getWorkoutRecommendations(_bmi!);
+      debugPrint("✅ Gemini returned: $recs"); // Replaced print with debugPrint
+    } catch (e) {
+      debugPrint("❌ Gemini error: $e"); // Replaced print with debugPrint
+
+      recs = {
+        "message":
+            "Because your BMI is $_bmi, here are default workouts while Gemini is unavailable.",
+        "titles": ["Full Body Blast", "Core Strength"],
+      };
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    setState(() {
+      _loading = false;
+    });
+
     });
 
     print("✅ BMI calculated: $_bmi ($_category)");
@@ -196,10 +229,10 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
 
           if (_loading)
             Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              color: Colors.black.withValues(
+                alpha: 0.5,
+              ), // Fixed deprecated withOpacity
+              child: const Center(child: CircularProgressIndicator()),
             ),
         ],
       ),

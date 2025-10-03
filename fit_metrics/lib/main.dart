@@ -1,7 +1,7 @@
 import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 import 'package:fit_metrics/screens/home.dart';
 import 'package:fit_metrics/screens/profile.dart';
-import 'package:fit_metrics/screens/progress_bmi_screen.dart';
+import 'package:fit_metrics/screens/progress_bmi.dart';
 import 'package:fit_metrics/screens/register.dart';
 import 'screens/recommended_workouts.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/recommended_workouts': (context) => const WorkoutLibraryScreen.all(),
         '/bmi_calculator_screen': (context) => BMICalculatorScreen(),
-        '/profile': (context) => Profile(),
+        '/profile': (context) => ProfileScreen(),
         '/register': (context) => Register(),
         '/progress_tracker': (context) => ProgressBMIScreen(),
       },

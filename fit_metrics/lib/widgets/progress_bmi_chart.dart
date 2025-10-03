@@ -18,9 +18,12 @@ class ProgressChart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               isCurved: true,
-              spots: entries
-                  .map((e) => FlSpot(e['week'].toDouble(), e['bmi'].toDouble()))
-                  .toList(),
+              spots: entries.map((e) {
+                final week = e['week'].toDouble();
+                final bmi = e['bmi'].toDouble();
+                final roundedBmi = double.parse(bmi.toStringAsFixed(2));
+                return FlSpot(week, roundedBmi);
+              }).toList(),
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(show: false),
             ),

@@ -4,10 +4,10 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final IconData icon;
   const CommonAppBar({
-    Key? key,
+    super.key, // Updated to use super parameter (fixes the lint error)
     this.title = "FitMetrics",
     this.icon = Icons.align_horizontal_right_rounded,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
