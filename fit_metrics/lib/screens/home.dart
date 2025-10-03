@@ -5,6 +5,8 @@ import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
+  const Home({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;

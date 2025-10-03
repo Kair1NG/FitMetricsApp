@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fit_metrics/screens/home.dart';
 
 class ProfileRegister extends StatelessWidget {
+  const ProfileRegister({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container();

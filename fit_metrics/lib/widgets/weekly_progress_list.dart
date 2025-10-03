@@ -7,20 +7,40 @@ class WeeklyProgressList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: entries.length,
-      shrinkWrap: true, 
-      //scrolling fix?
-      physics: const NeverScrollableScrollPhysics(), 
-      separatorBuilder: (context, index) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final entry = entries[index];
-        return ListTile(
-          leading: const Icon(Icons.fitness_center, color: Colors.blue),
-          title: Text("Week ${entry["week"]}"),
-          trailing: Text("BMI: ${entry["bmi"]}"),
-        );
-      },
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          const ListTile(
+            title: Text(
+              "Weekly Progress",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Column(
+            children: entries.map((entry) {
+              return ListTile(
+                dense: true,
+                title: Text("Week ${entry['week']}"),
+                trailing: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "BMI: ${entry['bmi']}",
+                      style: const TextStyle(color: Colors.green),
+                    ),
+                    Text(
+                      "Weight: ${entry['weight']} kg",
+                      style: const TextStyle(color: Colors.deepPurple),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }
