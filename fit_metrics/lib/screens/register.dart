@@ -1,118 +1,190 @@
-import 'package:fit_metrics/common/helpers/container_extensions.dart';
-import 'package:fit_metrics/common/widgets/app_bar.dart';
-import 'package:fit_metrics/services/profile_register.dart';
+// Register widget for user registration
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class Register extends StatefulWidget {
-  const Register({
-    super.key,
-  }); // Added super.key to fix use_key_in_widget_constructors
+class RegisterWidget extends StatefulWidget {
+  final VoidCallback onRegisterSuccess;
+
+  const RegisterWidget({super.key, required this.onRegisterSuccess});
 
   @override
-  RegisterState createState() => RegisterState(); // Made state class public to fix library_private_types_in_public_api
+  State<RegisterWidget> createState() => _RegisterWidgetState();
 }
 
-class RegisterState extends State<Register> {
-  // Renamed from _RegisterState to public RegisterState
+class _RegisterWidgetState extends State<RegisterWidget> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _register() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim(),
+            );
+
+        final user = userCredential.user;
+
+        if (user != null && mounted) {
+          final String email = user.email ?? '';
+          final String username = email.split('@')[0];
+
+          await user.updateDisplayName(username);
+          await user.reload();
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Welcome, $username!')));
+
+          widget.onRegisterSuccess();
+        }
+      } on FirebaseAuthException catch (e) {
+        if (mounted) {
+          String message;
+          if (e.code == 'weak-password') {
+            message = 'The password is too weak.';
+          } else if (e.code == 'email-already-in-use') {
+            message = 'This email is already registered.';
+          } else if (e.code == 'invalid-email') {
+            message = 'Invalid email address.';
+          } else {
+            message = 'Something went wrong. ${e.message}';
+          }
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Unexpected error: $e')));
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: CommonAppBar(icon: Icons.person_add, title: 'Register'),
-      body: Center(
-        child: context.styledContainer(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a username';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 24),
-                  SizedBox(
-                    height: 50,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ProfileRegister.register(
-                            context,
-                            _usernameController.text,
-                            _emailController.text,
-                            _passwordController.text,
-                          );
-                        }
-                      },
-                      style: context.styledElevatedButton().style,
-                      child: Text('Register'),
-                    ),
-                  ),
-                ],
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Create Account',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
               ),
             ),
-          ),
+            const SizedBox(height: 24),
+            TextFormField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixIcon: const Icon(Icons.email_outlined),
+              ),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixIcon: const Icon(Icons.lock_outline),
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                prefixIcon: const Icon(Icons.lock_outline),
+              ),
+              obscureText: true,
+              validator: (value) {
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : FilledButton(
+                      onPressed: _register,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        minimumSize: const Size(0, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Create Account'),
+                    ),
+            ),
+          ],
         ),
       ),
     );
