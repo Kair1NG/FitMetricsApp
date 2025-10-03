@@ -48,7 +48,6 @@ class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
       ),
       body: Column(
         children: [
-          // Reverted to original blue banner look from your screenshot
           if (widget.geminiMessage.isNotEmpty)
             Container(
               width: double.infinity,

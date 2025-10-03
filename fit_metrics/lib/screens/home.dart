@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
+import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
+import 'package:fit_metrics/screens/progress_bmi_screen.dart';
+import 'recommended_workouts.dart';
 import '../services/progress_bmi_service.dart';
 
 class Home extends StatefulWidget {
@@ -233,7 +236,10 @@ class _HomeState extends State<Home> {
                       height: 35,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/recommended_workouts');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const WorkoutLibraryScreen.all()),
+                          );
                         },
                         style: context.styledElevatedButton().style,
                         child: const Text("View All Workouts"),

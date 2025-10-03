@@ -23,7 +23,7 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
 
   final GeminiService _gemini = GeminiService(
     dotenv.env['GEMINI_API_KEY'] ?? '',
-  );
+    );
 
   double? _bmi;
   String? _category;
@@ -98,10 +98,38 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       _loading = false;
     });
 
+    });
+
+    print("✅ BMI calculated: $_bmi ($_category)");
+
+    Map<String, dynamic> recs;
+
+    try {
+      recs = await _gemini.getWorkoutRecommendations(_bmi!);
+      print("✅ Gemini returned: $recs");
+    } catch (e) {
+      print("❌ Gemini error: $e");
+
+      recs = {
+        "message":
+            "Because your BMI is $_bmi, here are default workouts while Gemini is unavailable.",
+        "titles": ["Full Body Blast", "Core Strength"],
+      };
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    setState(() {
+      _loading = false;
+    });
+
     if (!mounted) return;
 
     final String geminiMessage = recs["message"] as String;
     final List<String> titles = List<String>.from(recs["titles"] ?? []);
+
+    print("✅ Navigating with message: $geminiMessage");
+    print("✅ Navigating with titles: $titles");
 
     Navigator.push(
       context,
@@ -112,6 +140,8 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
         ),
       ),
     );
+
+    print("✅ Navigation pushed!");
   }
 
   @override
