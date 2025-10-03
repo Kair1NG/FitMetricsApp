@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/services/bmi_calculator.dart';
 import '../widgets/bmi_result_box.dart';
+import '../services/gemini_service.dart';
+import 'recommended_workouts.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BMICalculatorScreen extends StatefulWidget {
   const BMICalculatorScreen({super.key});
@@ -17,8 +20,13 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
+  final GeminiService _gemini = GeminiService(
+    dotenv.env['GEMINI_API_KEY'] ?? '',
+    );
+
   double? _bmi;
   String? _category;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -41,9 +49,13 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     return null;
   }
 
-  void _calculate() {
+  void _calculate() async {
     FocusScope.of(context).unfocus();
-    if (!_formKey.currentState!.validate()) return;
+
+    if (!_formKey.currentState!.validate()) {
+      print("❌ Validation failed");
+      return;
+    }
 
     final h = double.parse(_heightController.text.trim());
     final w = double.parse(_weightController.text.trim());
@@ -52,7 +64,51 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     setState(() {
       _bmi = result.bmi;
       _category = result.category;
+      _loading = true;
     });
+
+    print("✅ BMI calculated: $_bmi ($_category)");
+
+    Map<String, dynamic> recs;
+
+    try {
+      recs = await _gemini.getWorkoutRecommendations(_bmi!);
+      print("✅ Gemini returned: $recs");
+    } catch (e) {
+      print("❌ Gemini error: $e");
+
+      recs = {
+        "message":
+            "Because your BMI is $_bmi, here are default workouts while Gemini is unavailable.",
+        "titles": ["Full Body Blast", "Core Strength"],
+      };
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    setState(() {
+      _loading = false;
+    });
+
+    if (!mounted) return;
+
+    final String geminiMessage = recs["message"] as String;
+    final List<String> titles = List<String>.from(recs["titles"] ?? []);
+
+    print("✅ Navigating with message: $geminiMessage");
+    print("✅ Navigating with titles: $titles");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WorkoutLibraryScreen(
+          recommendations: titles,
+          geminiMessage: geminiMessage,
+        ),
+      ),
+    );
+
+    print("✅ Navigation pushed!");
   }
 
   @override
@@ -62,78 +118,90 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: CommonAppBar(icon: Icons.calculate, title: "BMI Calculator"),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              context.styledCard(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'Calculate Your BMI',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _heightController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.]'),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  context.styledCard(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Text(
+                              'Calculate Your BMI',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextFormField(
+                              controller: _heightController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]'),
+                                ),
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: 'Height (cm)',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (v) =>
+                                  _numberValidator(v, label: 'Height (cm)'),
+                            ),
+                            const SizedBox(height: 12),
+                            TextFormField(
+                              controller: _weightController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]'),
+                                ),
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: 'Weight (kg)',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (v) =>
+                                  _numberValidator(v, label: 'Weight (kg)'),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: 48,
+                              child: ElevatedButton(
+                                onPressed: _calculate,
+                                style: context.styledElevatedButton().style,
+                                child: const Text('Calculate BMI'),
+                              ),
                             ),
                           ],
-                          decoration: const InputDecoration(
-                            labelText: 'Height (cm)',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (v) =>
-                              _numberValidator(v, label: 'Height (cm)'),
                         ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _weightController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.]'),
-                            ),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Weight (kg)',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (v) =>
-                              _numberValidator(v, label: 'Weight (kg)'),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: _calculate,
-                            style: context.styledElevatedButton().style,
-                            child: const Text('Calculate BMI'),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  BMICalculatorResultBox(bmi: _bmi, category: _category),
+                ],
               ),
-              const SizedBox(height: 16),
-              BMICalculatorResultBox(bmi: _bmi, category: _category),
-            ],
+            ),
           ),
-        ),
+
+          if (_loading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
       ),
     );
   }

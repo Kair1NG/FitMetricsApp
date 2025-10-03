@@ -5,8 +5,10 @@ import 'package:fit_metrics/screens/progress_bmi_screen.dart';
 import 'package:fit_metrics/screens/register.dart';
 import 'screens/recommended_workouts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Home(),
       routes: {
-        '/recommended_workouts': (context) => WorkoutLibraryScreen(),
+        '/recommended_workouts': (context) => const WorkoutLibraryScreen.all(),
         '/bmi_calculator_screen': (context) => BMICalculatorScreen(),
         '/profile': (context) => Profile(),
         '/register': (context) => Register(),
