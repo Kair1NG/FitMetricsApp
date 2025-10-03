@@ -20,10 +20,9 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
-
   final GeminiService _gemini = GeminiService(
     dotenv.env['GEMINI_API_KEY'] ?? '',
-    );
+  );
 
   double? _bmi;
   String? _category;
@@ -54,13 +53,13 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
     FocusScope.of(context).unfocus();
 
     if (!_formKey.currentState!.validate()) {
-      debugPrint("❌ Validation failed"); // Replaced print with debugPrint
+      debugPrint("❌ Validation failed");
       return;
     }
 
-    final h = double.parse(_heightController.text.trim());
-    final w = double.parse(_weightController.text.trim());
-    final result = BMICalculator.calculate(heightCm: h, weightKg: w);
+    final height = double.parse(_heightController.text.trim());
+    final weight = double.parse(_weightController.text.trim());
+    final result = BMICalculator.calculate(heightCm: height, weightKg: weight);
 
     setState(() {
       _bmi = result.bmi;
@@ -68,49 +67,25 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       _loading = true;
     });
 
-    // Save BMI + progress tracking (your code)
+    // Save BMI and track progress
     final bmiJson = result.toJson();
     final bmiService = BMIService();
-    bmiService.saveBMI(bmiJson, targetBmi: 22.0, height: h, weight: w);
+    bmiService.saveBMI(
+      bmiJson,
+      targetBmi: 22.0,
+      height: height,
+      weight: weight,
+    );
 
-    debugPrint(
-      "✅ BMI calculated: $_bmi ($_category)",
-    ); // Replaced print with debugPrint
+    debugPrint("✅ BMI calculated: $_bmi ($_category)");
 
-    Map<String, dynamic> recs;
-
+    Map<String, dynamic> recommendations;
     try {
-      recs = await _gemini.getWorkoutRecommendations(_bmi!);
-      debugPrint("✅ Gemini returned: $recs"); // Replaced print with debugPrint
+      recommendations = await _gemini.getWorkoutRecommendations(_bmi!);
+      debugPrint("✅ Gemini returned: $recommendations");
     } catch (e) {
-      debugPrint("❌ Gemini error: $e"); // Replaced print with debugPrint
-
-      recs = {
-        "message":
-            "Because your BMI is $_bmi, here are default workouts while Gemini is unavailable.",
-        "titles": ["Full Body Blast", "Core Strength"],
-      };
-    }
-
-    await Future.delayed(const Duration(seconds: 3));
-
-    setState(() {
-      _loading = false;
-    });
-
-    });
-
-    print("✅ BMI calculated: $_bmi ($_category)");
-
-    Map<String, dynamic> recs;
-
-    try {
-      recs = await _gemini.getWorkoutRecommendations(_bmi!);
-      print("✅ Gemini returned: $recs");
-    } catch (e) {
-      print("❌ Gemini error: $e");
-
-      recs = {
+      debugPrint("❌ Gemini error: $e");
+      recommendations = {
         "message":
             "Because your BMI is $_bmi, here are default workouts while Gemini is unavailable.",
         "titles": ["Full Body Blast", "Core Strength"],
@@ -125,11 +100,13 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
 
     if (!mounted) return;
 
-    final String geminiMessage = recs["message"] as String;
-    final List<String> titles = List<String>.from(recs["titles"] ?? []);
+    final String geminiMessage = recommendations["message"] as String;
+    final List<String> titles = List<String>.from(
+      recommendations["titles"] ?? [],
+    );
 
-    print("✅ Navigating with message: $geminiMessage");
-    print("✅ Navigating with titles: $titles");
+    debugPrint("✅ Navigating with message: $geminiMessage");
+    debugPrint("✅ Navigating with titles: $titles");
 
     Navigator.push(
       context,
@@ -141,16 +118,19 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
       ),
     );
 
-    print("✅ Navigation pushed!");
+    debugPrint("✅ Navigation pushed!");
   }
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: cs.surface,
-      appBar: CommonAppBar(icon: Icons.calculate, title: "BMI Calculator"),
+      backgroundColor: colorScheme.surface,
+      appBar: const CommonAppBar(
+        icon: Icons.calculate,
+        title: "BMI Calculator",
+      ),
       body: Stack(
         children: [
           Padding(
@@ -226,12 +206,9 @@ class _BMICalculatorScreenState extends State<BMICalculatorScreen> {
               ),
             ),
           ),
-
           if (_loading)
             Container(
-              color: Colors.black.withValues(
-                alpha: 0.5,
-              ), // Fixed deprecated withOpacity
+              color: Colors.black.withOpacity(0.5),
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
