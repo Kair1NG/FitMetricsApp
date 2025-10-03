@@ -72,7 +72,7 @@ class BMICalculatorResultBox extends StatelessWidget {
             const SizedBox(height: 12),
             Center(
               child: Text(
-                bmi!.toStringAsFixed(1), // 1 decimal place
+                bmi!.toStringAsFixed(2), // now 2 decimal places
                 style: TextStyle(
                   fontSize: 44,
                   fontWeight: FontWeight.w800,

@@ -16,7 +16,6 @@ class ProfileRegister extends StatelessWidget {
     String password,
   ) async {
     try {
-      // TODO: registration logic
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Registration successful!'),

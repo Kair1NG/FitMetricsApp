@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class buildStatCard extends StatelessWidget {
+class BuildStatCard extends StatelessWidget {
   final String title;
   final String value;
   final Color color;
 
-  const buildStatCard({
+  const BuildStatCard({
     super.key,
     required this.title,
     required this.value,

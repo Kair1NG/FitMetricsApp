@@ -33,16 +33,16 @@ class ProgressBMIScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: buildStatCard(
+                  child: BuildStatCard(
                     title: "Current BMI",
-                    value: currentBmi?.toStringAsFixed(1) ?? '-',
+                    value: currentBmi?.toStringAsFixed(2) ?? '-',
                     color: Colors.green,
                   ),
                 ),
                 Expanded(
-                  child: buildStatCard(
+                  child: BuildStatCard(
                     title: "Change",
-                    value: bmiChange.toStringAsFixed(1),
+                    value: bmiChange.toStringAsFixed(2),
                     color: Colors.orange,
                   ),
                 ),

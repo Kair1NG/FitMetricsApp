@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
+import 'package:fit_metrics/screens/bmi_calculator_screen.dart';
+import 'package:fit_metrics/screens/progress_bmi_screen.dart';
+import 'recommended_workouts.dart';
 import '../services/progress_bmi_service.dart';
 
 class Home extends StatefulWidget {
@@ -96,11 +99,12 @@ class _HomeState extends State<Home> {
                     SizedBox(
                       height: 35,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
+                        onPressed: () async {
+                          await Navigator.pushNamed(
                             context,
                             "/bmi_calculator_screen",
                           );
+                          _loadBmi(); // refresh after returning
                         },
                         style: context.styledElevatedButton().style,
                         child: const Text('Calculate BMI'),
@@ -129,7 +133,7 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(1) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
+                      "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(2) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
@@ -141,8 +145,8 @@ class _HomeState extends State<Home> {
                         },
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.green.shade50,
-                          minimumSize: Size(double.infinity, 50),
-                          side: BorderSide(color: Colors.green),
+                          minimumSize: const Size(double.infinity, 50),
+                          side: const BorderSide(color: Colors.green),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -152,7 +156,7 @@ class _HomeState extends State<Home> {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+                            children: const [
                               Icon(
                                 Icons.trending_up,
                                 color: Colors.green,
@@ -232,10 +236,13 @@ class _HomeState extends State<Home> {
                       height: 35,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/recommended_workouts');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const WorkoutLibraryScreen.all()),
+                          );
                         },
                         style: context.styledElevatedButton().style,
-                        child: Text("View All Workouts"),
+                        child: const Text("View All Workouts"),
                       ),
                     ),
                   ],

@@ -9,16 +9,19 @@ class BMICalculator {
     required double weightKg,
   }) {
     final meters = heightCm / 100.0; // Convert cm to meters
-    final bmi = weightKg / (meters * meters); // BMI formula
+    final bmiValue = weightKg / (meters * meters); // BMI formula
+    final bmi = double.parse(
+      bmiValue.toStringAsFixed(2),
+    ); // keep as double with 2 decimals
 
     String category;
 
     // Determine BMI category
-    if (bmi < 18.5) {
+    if (bmiValue < 18.5) {
       category = 'Underweight';
-    } else if (bmi < 25) {
+    } else if (bmiValue < 25) {
       category = 'Normal weight';
-    } else if (bmi < 30) {
+    } else if (bmiValue < 30) {
       category = 'Overweight';
     } else {
       category = 'Obese';

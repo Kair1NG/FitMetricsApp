@@ -150,23 +150,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-
-                    // Second row for BMI
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildInfoTile(
-                            context,
-                            label: 'BMI',
-                            value: currentBmi != null
-                                ? "${currentBmi!.toStringAsFixed(1)} (${currentCategory ?? '-'})"
-                                : 'Not calculated',
-                            colorScheme: colorScheme,
-                            isLast: true,
-                          ),
-                        ),
-                        const Expanded(child: SizedBox()), // empty slot for 2x3
-                      ],
+                  ),
+                  FilledButton.tonal(
+                    onPressed: () {
+                      debugPrint(
+                        'Edit profile pressed',
+                      ); // Replaced print with debugPrint
+                    },
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [Icon(Icons.edit, size: 16)],
                     ),
                   ],
                 ),
@@ -315,6 +317,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   minimumSize: const Size(0, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
+                  // Second row for BMI
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoTile(
+                          context,
+                          label: 'BMI',
+                          value: currentBmi != null
+                              ? "${currentBmi!.toStringAsFixed(2)} (${currentCategory ?? '-'})"
+                              : 'Not calculated',
+                          colorScheme: colorScheme,
+                          isLast: true,
+                        ),
+                      ),
+                      const Expanded(child: SizedBox()), // empty slot for 2x3
+                    ],
                   ),
                 ),
                 child: const Text('Sign In'),
