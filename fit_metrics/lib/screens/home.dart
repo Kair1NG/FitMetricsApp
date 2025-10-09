@@ -4,6 +4,7 @@ import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:fit_metrics/common/widgets/drawer.dart';
 import 'recommended_workouts.dart';
 import '../services/progress_bmi_service.dart';
+import '../services/workout_progress_service.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,11 +16,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   double? currentBmi;
   String? currentCategory;
+  double completionPercentage = 0;
+  int completedCount = 0;
+  final int totalRecommendedWorkouts = 4;
+  final WorkoutProgressService _progressService = WorkoutProgressService();
 
   @override
   void initState() {
     super.initState();
     _loadBmi();
+    _loadCompletedWorkouts(); // load saved progress here
   }
 
   void _loadBmi() {
@@ -27,6 +33,17 @@ class _HomeState extends State<Home> {
     setState(() {
       currentBmi = bmiService.getCurrentBMI();
       currentCategory = bmiService.getCurrentCategory();
+    });
+  }
+
+  Future<void> _loadCompletedWorkouts() async {
+    final completed = await _progressService.getCompletedWorkouts();
+    setState(() {
+      completedCount = completed.length;
+      completionPercentage = (completedCount / totalRecommendedWorkouts).clamp(
+        0.0,
+        1.0,
+      );
     });
   }
 
@@ -176,19 +193,66 @@ class _HomeState extends State<Home> {
 
               const SizedBox(height: 16),
 
-              // RECOMMENDED WORKOUTS
-              context.styledContainer(
+              // RECOMMENDED WORKOUTS + CIRCULAR PROGRESS
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: const Offset(1, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Recommended Workouts",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    // Title + Progress beside each other
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Recommended Workouts",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              CircularProgressIndicator(
+                                value: completionPercentage,
+                                strokeWidth: 6,
+                                backgroundColor: Colors.green.shade200,
+                                valueColor: const AlwaysStoppedAnimation(
+                                  Colors.green,
+                                ),
+                              ),
+                              Center(
+                                child: Text(
+                                  "${(completionPercentage * 100).round()}%",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+
                     const SizedBox(height: 12),
+
                     Column(
                       children: workouts.map((w) {
                         return Container(
@@ -229,18 +293,18 @@ class _HomeState extends State<Home> {
                       }).toList(),
                     ),
                     const SizedBox(height: 12),
-
                     SizedBox(
                       height: 35,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
                                   const WorkoutLibraryScreen.all(),
                             ),
                           );
+                          await _loadCompletedWorkouts(); // refresh after returning
                         },
                         style: context.styledElevatedButton().style,
                         child: const Text("View All Workouts"),

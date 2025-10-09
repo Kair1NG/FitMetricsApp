@@ -5,7 +5,10 @@ import '../services/workout_service.dart';
 import '../widgets/step_tile.dart';
 import '../common/widgets/app_bar.dart';
 import '../common/helpers/container_extensions.dart';
+import '../services/workout_data.dart';
+import '../services/photo_assets_data.dart';
 import 'workout_summary.dart';
+import '../services/workout_progress_service.dart';
 
 class WorkoutInProgress extends StatefulWidget {
   final List<WorkoutStep>? steps;
@@ -21,18 +24,18 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
   late List<WorkoutStep> _steps;
   StopwatchController? _controller;
   final _workoutService = WorkoutService();
+  final _progressService = WorkoutProgressService();
   bool _loading = true;
   bool _error = false;
 
   @override
   void initState() {
     super.initState();
-    _loadSteps(); // Load workout steps on screen start
+    _loadSteps();
   }
 
   Future<void> _loadSteps() async {
     try {
-      // Decide where to get the workout steps from
       if (widget.steps != null) {
         _steps = widget.steps!;
       } else if (widget.workoutId != null) {
@@ -41,16 +44,14 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
         _steps = await _workoutService.fetchWorkoutSteps('sample');
       }
 
-      // Initialize the stopwatch controller for timing logic
       _controller = StopwatchController(
         steps: _steps,
-        onTick: () => setState(() {}), // Update UI every tick
-        onComplete: _goToSummary, // Go to summary when workout is done
+        onTick: () => setState(() {}),
+        onComplete: _completeWorkout,
       )..init(autoStartFirst: false);
 
       setState(() => _loading = false);
     } catch (e) {
-      // Handle loading errors
       setState(() {
         _loading = false;
         _error = true;
@@ -60,12 +61,30 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
 
   @override
   void dispose() {
-    _controller?.dispose(); // Clean up controller to prevent memory leaks
+    _controller?.dispose();
     super.dispose();
   }
 
-  void _goToSummary() {
-    // Navigate to summary screen when all steps are completed
+  Future<void> _completeWorkout() async {
+    // Use workoutId if provided; otherwise fallback to the first step's name as an ID
+    final id = widget.workoutId ?? _steps.first.name;
+    await _progressService.markWorkoutCompleted(id);
+
+    // Navigate to summary (summary will load progress from WorkoutProgressService)
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WorkoutSummaryScreen(
+          totalTimeSec: _controller?.totalTimeSec ?? 0,
+          totalCalories: _controller?.totalCalories ?? 0,
+          steps: _steps,
+          workoutId: id,
+        ),
+      ),
+    );
+  }
+
+  void goToSummary() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -78,13 +97,11 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
     );
   }
 
-  // Format seconds into MM:SS
   String _formatTime(int sec) =>
       '${(sec ~/ 60).toString().padLeft(2, '0')}:${(sec % 60).toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
-    // Loading and error states
     if (_loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -95,19 +112,16 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
       );
     }
 
-    // Main workout UI
     final controller = _controller!;
     final step = _steps[controller.currentIndex];
     final cs = Theme.of(context).colorScheme;
     final progressValue = (controller.currentIndex + 1) / _steps.length;
 
-    // Show clock only for timed phases
     final showClock =
         controller.phase == Phase.prep ||
         controller.phase == Phase.workout ||
         controller.phase == Phase.rest;
 
-    // Determine total time for current phase
     final totalForPhase = controller.phase == Phase.prep
         ? StopwatchController.prepSeconds
         : (controller.phase == Phase.workout && step.duration != null
@@ -116,10 +130,12 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
               ? (step.duration ?? 1)
               : 1);
 
-    // Progress for circular timer
     final circleValue = totalForPhase > 0
         ? controller.remaining / totalForPhase
         : 0.0;
+
+    final imagePath = step.imagePath ?? getExerciseImagePath(step.name);
+    final isRestStep = step.isRest;
 
     return Scaffold(
       appBar: const CommonAppBar(
@@ -132,7 +148,6 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Overall workout progress bar
               LinearProgressIndicator(
                 value: progressValue,
                 minHeight: 8,
@@ -142,7 +157,6 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  // Current step info
                   Text(
                     'Step ${controller.currentIndex + 1} of ${_steps.length}',
                     style: TextStyle(
@@ -151,7 +165,6 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                     ),
                   ),
                   const Spacer(),
-                  // Phase indicator (Prep/Workout/Rest/Reps)
                   Text(
                     controller.phase == Phase.idle
                         ? (step.reps != null ? '${step.reps} reps' : '')
@@ -164,11 +177,9 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                 ],
               ),
               const SizedBox(height: 12),
-              // Main container showing current exercise details
               context.styledContainer(
                 child: Column(
                   children: [
-                    // Exercise name and icon
                     Row(
                       children: [
                         CircleAvatar(
@@ -203,8 +214,36 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
+                    if (!isRestStep)
+                      if (!isRestStep)
+                        if (!isRestStep)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: AspectRatio(
+                              aspectRatio:
+                                  16 / 9, // keeps a nice rectangular shape
+                              child: Image.asset(
+                                imagePath,
+                                width: double.infinity,
+                                fit: BoxFit
+                                    .contain, // ensures whole image is visible
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Image.asset(
+                                        PhotoAssetsData.placeholder,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                              ),
+                            ),
+                          ),
                     const SizedBox(height: 18),
-                    // Timer or reps display depending on phase
                     if (showClock)
                       SizedBox(
                         height: 220,
@@ -212,7 +251,6 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Circular countdown timer
                               SizedBox(
                                 width: 200,
                                 height: 200,
@@ -256,7 +294,6 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                         ),
                       )
                     else
-                      // Display reps if it's a rep-based step
                       Column(
                         children: [
                           Text(
@@ -272,7 +309,6 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                         ],
                       ),
                     const SizedBox(height: 18),
-                    // Navigation buttons (Previous, Pause/Resume, Next)
                     Row(
                       children: [
                         Expanded(
@@ -306,8 +342,8 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                                 controller.isRunning ? 'Pause' : 'Resume',
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: cs.primary,
-                                foregroundColor: cs.onPrimary,
+                                backgroundColor: cs.secondary,
+                                foregroundColor: cs.onSecondary,
                                 minimumSize: const Size(double.infinity, 50),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -315,12 +351,22 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                               ),
                             ),
                           ),
-                        if (showClock) const SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: controller.next,
+                            onPressed: () {
+                              if (controller.currentIndex < _steps.length - 1) {
+                                controller.next();
+                              } else {
+                                _completeWorkout();
+                              }
+                            },
                             icon: const Icon(Icons.arrow_forward),
-                            label: const Text('Next'),
+                            label: Text(
+                              controller.currentIndex < _steps.length - 1
+                                  ? 'Next'
+                                  : 'Complete',
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: cs.primary,
                               foregroundColor: cs.onPrimary,
@@ -333,45 +379,17 @@ class _WorkoutInProgressState extends State<WorkoutInProgress> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    // Extra rest button shown only during rest phase
-                    if (controller.phase == Phase.rest)
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: controller.addExtraRest,
-                          icon: const Icon(Icons.add_alarm),
-                          label: const Text('+10s Rest'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: cs.primary,
-                            foregroundColor: cs.onPrimary,
-                            minimumSize: const Size(double.infinity, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
-              const Text(
-                'Upcoming:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              // List of remaining steps
+              const SizedBox(height: 20),
               Column(
                 children: List.generate(
-                  _steps.length - controller.currentIndex - 1,
-                  (i) {
-                    final s = _steps[controller.currentIndex + 1 + i];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: StepTile(step: s, active: false),
-                    );
-                  },
+                  _steps.length,
+                  (i) => StepTile(
+                    step: _steps[i],
+                    active: i == controller.currentIndex,
+                  ),
                 ),
               ),
             ],
