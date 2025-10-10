@@ -169,19 +169,7 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
                 const SizedBox(height: 16),
 
                 // Recommended Workouts + progress (right)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: const Offset(1, 2),
-                      ),
-                    ],
-                  ),
+                context.styledContainer(
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,18 +178,19 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             "Recommended Workouts",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
+                              color: cs.onSurface,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             "$completedCount of $totalRecommendedWorkouts completed",
                             style: TextStyle(
-                              color: Colors.grey.shade800,
+                              color: cs.tertiary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

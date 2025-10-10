@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 import 'package:fit_metrics/common/widgets/app_bar.dart';
-import 'package:fit_metrics/common/widgets/drawer.dart';
+import 'package:fit_metrics/services/photo_assets_data.dart';
 import 'recommended_workouts.dart';
 import '../services/progress_bmi_service.dart';
 import '../services/workout_progress_service.dart';
@@ -81,233 +81,286 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: const CommonAppBar(),
-      drawer: const CommonDrawer(),
+      // removed drawer
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // FEATURES
-              context.styledContainer(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calculate,
-                          size: 25,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          'BMI Calculator',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      height: 35,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.pushNamed(
-                            context,
-                            "/bmi_calculator_screen",
-                          );
-                          _loadBmi(); // refresh after returning
-                        },
-                        style: context.styledElevatedButton().style,
-                        child: const Text('Calculate BMI'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 16),
-
-              // PROGRESS CHART
-              context.styledContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.trending_up, color: Colors.green),
-                        SizedBox(width: 8),
-                        Text(
-                          "Progress Tracker",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(2) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 120,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/progress_tracker');
-                        },
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.green.shade50,
-                          minimumSize: const Size(double.infinity, 50),
-                          side: const BorderSide(color: Colors.green),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.trending_up,
-                                color: Colors.green,
-                                size: 28,
-                              ),
-                              SizedBox(height: 6),
-                              Text(
-                                "Click to view detailed progress",
-                                style: TextStyle(color: Colors.green),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // RECOMMENDED WORKOUTS + CIRCULAR PROGRESS
+              // Welcome Text + Image
               Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.3,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: const Offset(1, 2),
+                  image: DecorationImage(
+                    image: AssetImage('lib/assets/images/fitness_bg.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Welcome to FitMetrics!",
+                      style: TextStyle(
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onPrimary,
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(1, 2),
+                            blurRadius: 2,
+                            color: Colors.black45,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Your personal fitness companion",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorScheme.onPrimary,
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(1, 1),
+                            blurRadius: 2,
+                            color: Colors.black45,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title + Progress beside each other
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Recommended Workouts",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: Stack(
-                            fit: StackFit.expand,
+                    context.styledContainer(
+                      child: Column(
+                        children: [
+                          // BMI CALCULATOR
+                          Row(
                             children: [
-                              CircularProgressIndicator(
-                                value: completionPercentage,
-                                strokeWidth: 6,
-                                backgroundColor: Colors.green.shade200,
-                                valueColor: const AlwaysStoppedAnimation(
-                                  Colors.green,
-                                ),
+                              Icon(
+                                Icons.calculate,
+                                size: 25,
+                                color: colorScheme.primary,
                               ),
-                              Center(
-                                child: Text(
-                                  "${(completionPercentage * 100).round()}%",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
+                              const SizedBox(width: 16),
+                              Text(
+                                'BMI Calculator',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorScheme.onSurface,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Column(
-                      children: workouts.map((w) {
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: w["color"],
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: w["border"]),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(w["icon"], size: 20, color: w['icon_color']),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    w["title"],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    w["level"],
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 35,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const WorkoutLibraryScreen.all(),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            height: 35,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                await Navigator.pushNamed(
+                                  context,
+                                  "/bmi_calculator_screen",
+                                );
+                                _loadBmi(); // refresh after returning
+                              },
+                              style: context.styledElevatedButton().style,
+                              child: const Text('Calculate BMI'),
                             ),
-                          );
-                          await _loadCompletedWorkouts(); // refresh after returning
-                        },
-                        style: context.styledElevatedButton().style,
-                        child: const Text("View All Workouts"),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // PROGRESS CHART
+                    context.styledContainer(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.trending_up, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text(
+                                "Progress Tracker",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Current BMI: ${currentBmi != null ? currentBmi!.toStringAsFixed(2) + (currentCategory != null ? " ($currentCategory)" : "") : "Not calculated"}",
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 120,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/progress_tracker',
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.green.shade50,
+                                minimumSize: const Size(double.infinity, 50),
+                                side: const BorderSide(color: Colors.green),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.trending_up,
+                                      color: Colors.green,
+                                      size: 28,
+                                    ),
+                                    SizedBox(height: 6),
+                                    Text(
+                                      "Click to view detailed progress",
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // RECOMMENDED WORKOUTS + CIRCULAR PROGRESS
+                    context.styledContainer(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title + Progress beside each other
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Recommended Workouts",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 50,
+                                width: 50,
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      value: completionPercentage,
+                                      strokeWidth: 6,
+                                      backgroundColor: Colors.green.shade200,
+                                      valueColor: const AlwaysStoppedAnimation(
+                                        Colors.green,
+                                      ),
+                                    ),
+                                    Center(
+                                      child: Text(
+                                        "${(completionPercentage * 100).round()}%",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                          color: colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Column(
+                            children: workouts.map((w) {
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: w["color"],
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: w["border"]),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      w["icon"],
+                                      size: 20,
+                                      color: w['icon_color'],
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          w["title"],
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          w["level"],
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            height: 35,
+                            child: context.styledElevatedButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const WorkoutLibraryScreen.all(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'View All Workouts',
+                                style: TextStyle(color: colorScheme.onPrimary),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
