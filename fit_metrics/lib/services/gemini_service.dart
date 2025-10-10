@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart'; // Added for debugPrint
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'workout_data.dart';
+import '../services/workout_data.dart'; // Added for getExerciseImagePath
 
 class GeminiService {
   final GenerativeModel _model;
@@ -116,7 +116,20 @@ Example JSON:
       final trimmedText = text.trim();
       if (trimmedText.startsWith('[') && trimmedText.endsWith(']')) {
         final jsonList = jsonDecode(trimmedText) as List<dynamic>;
-        return jsonList.cast<Map<String, dynamic>>();
+        List<Map<String, dynamic>> steps = jsonList
+            .cast<Map<String, dynamic>>();
+
+        // Integrated: Add imagePath to each step (skip rest)
+        for (var step in steps) {
+          if (step['type'] != 'rest') {
+            // Skip rest
+            step['imagePath'] = getExerciseImagePath(step['name'] ?? '');
+          } else {
+            step['imagePath'] = null; // Explicit for rest
+          }
+        }
+
+        return steps; // Now includes imagePath for fromJson to pick up
       } else {
         throw FormatException('Response is not a valid JSON array');
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../common/models/workout_step.dart';
 import '../common/widgets/app_bar.dart';
+import '../services/workout_data.dart'; // For getExerciseImagePath, getBannerImageForWorkout
 import 'workout_in_progress.dart';
 
 class WorkoutDetailsScreen extends StatelessWidget {
@@ -17,14 +18,12 @@ class WorkoutDetailsScreen extends StatelessWidget {
     required this.exercises,
   });
 
-  // Convert raw exercise maps into a list of WorkoutStep objects
   List<WorkoutStep> _createWorkoutSteps() {
     List<WorkoutStep> steps = [];
     for (int i = 0; i < exercises.length; i++) {
       final exercise = exercises[i];
       final name = exercise['name'] as String;
       final repsStr = exercise['reps'] as String? ?? '15 Reps';
-      // Extract number from reps string, default to 15 if parsing fails
       final reps =
           int.tryParse(repsStr.replaceAll(RegExp(r'[^0-9]'), '')) ?? 15;
 
@@ -33,23 +32,27 @@ class WorkoutDetailsScreen extends StatelessWidget {
           type: StepType.workout,
           name: name,
           reps: reps,
-          calories: (reps ~/ 5) + 5, // simple calorie estimate
+          calories: (reps ~/ 5) + 5,
           target: _getTargetForExercise(name),
           icon: Icons.fitness_center,
+          imagePath: getExerciseImagePath(name),
         ),
       );
 
-      // Insert a 30-second rest after each exercise except the last one
       if (i < exercises.length - 1) {
         steps.add(
-          const WorkoutStep(type: StepType.rest, name: 'Rest', duration: 30),
+          const WorkoutStep(
+            type: StepType.rest,
+            name: 'Rest',
+            duration: 30,
+            imagePath: null,
+          ),
         );
       }
     }
     return steps;
   }
 
-  // Determine target muscle group based on exercise name
   String? _getTargetForExercise(String name) {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('squat') || lowerName.contains('leg')) {
@@ -68,13 +71,13 @@ class WorkoutDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final steps = _createWorkoutSteps();
-
-    // Pick a color depending on workout intensity
     final levelColor = intensity == 'Beginner'
         ? Colors.green
         : intensity == 'Intermediate'
         ? Colors.orange
         : Colors.red;
+
+    final bannerImagePath = getBannerImageForWorkout(title);
 
     return Scaffold(
       appBar: CommonAppBar(
@@ -84,101 +87,134 @@ class WorkoutDetailsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // TOP BANNER WITH OVERLAY TEXT (FULL IMAGE VISIBLE)
+            Stack(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 250, // full height to show complete image
+                  child: Image.asset(
+                    bannerImagePath,
+                    fit: BoxFit
+                        .fitWidth, // full width, height adjusts to show full image
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/images/placeholder.jpg',
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 24, // more space from edges
+                  right: 24,
+                  bottom: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black54, // semi-transparent black
+                      borderRadius: BorderRadius.circular(
+                        12,
+                      ), // rounded rectangle
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min, // fit content vertically
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: intensity == 'Beginner'
+                                    ? Colors.green.withAlpha(50)
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: levelColor,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Text(
+                                intensity.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: levelColor,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFFD700),
+                                    Color(0xFFFFB700),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(2, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: const [
+                                  Icon(
+                                    Icons.fitness_center,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    ' NO EQUIPMENT ! ',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // EXERCISE LIST
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Workout title container
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 20,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        // Transparent level tag with light green for Beginner
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: intensity == 'Beginner'
-                                ? Colors.green.withValues(alpha: 0.2)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: levelColor, width: 1.5),
-                          ),
-                          child: Text(
-                            intensity.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: levelColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // "No Equipment" badge with gradient and shadow
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFFFD700), Color(0xFFFFB700)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 4,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: const [
-                              Icon(
-                                Icons.fitness_center,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                ' NO EQUIPMENT ! ',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // List of all exercises with reps
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -188,12 +224,10 @@ class WorkoutDetailsScreen extends StatelessWidget {
                         final exercise = exercises[index];
                         final reps = exercise['reps'] ?? '';
                         final name = exercise['name'] ?? '';
+                        final imagePath = getExerciseImagePath(name);
 
                         return Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 20,
-                          ),
+                          height: 130,
                           decoration: BoxDecoration(
                             color: Colors.grey.withAlpha(25),
                             borderRadius: BorderRadius.circular(12),
@@ -201,23 +235,53 @@ class WorkoutDetailsScreen extends StatelessWidget {
                               color: Colors.grey.withAlpha(77),
                             ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              Text(
-                                name,
-                                style: TextStyle(
-                                  color: Colors.grey[900],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12),
+                                ),
+                                child: AspectRatio(
+                                  aspectRatio: 1.2,
+                                  child: Image.asset(
+                                    imagePath,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Image.asset(
+                                              'assets/images/placeholder.jpg',
+                                              fit: BoxFit.cover,
+                                            ),
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 6),
-                              Text(
-                                reps,
-                                style: TextStyle(
-                                  color: Colors.grey[700],
-                                  fontSize: 14,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        name,
+                                        style: TextStyle(
+                                          color: Colors.grey[900],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        reps,
+                                        style: TextStyle(
+                                          color: Colors.grey[700],
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -229,7 +293,6 @@ class WorkoutDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // Bottom panel with Start button and quick stats
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -240,7 +303,6 @@ class WorkoutDetailsScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      // Start workout and pass generated steps to WorkoutInProgress screen
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -267,7 +329,6 @@ class WorkoutDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // Display quick workout stats: number of exercises, duration, intensity
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -303,7 +364,6 @@ class WorkoutDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Helper widget for displaying an icon with a label inside a colored box
   Widget _iconWithLabelInBox(
     IconData icon,
     String label, {

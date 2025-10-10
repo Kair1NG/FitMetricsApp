@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fit_metrics/services/workout_data.dart';
 import 'package:fit_metrics/screens/workout_details.dart';
-import 'package:fit_metrics/assets/photo_assets_data.dart';
+import 'package:fit_metrics/services/photo_assets_data.dart';
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
 
 class WorkoutLibraryScreen extends StatefulWidget {

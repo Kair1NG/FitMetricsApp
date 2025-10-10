@@ -11,6 +11,7 @@ class WorkoutStep {
   final int? calories; // estimated calories burned
   final String? target; // target muscle group
   final IconData icon; // icon to show in the UI
+  final String? imagePath; // Optional: asset path for UI (new field)
 
   const WorkoutStep({
     required this.type,
@@ -20,6 +21,7 @@ class WorkoutStep {
     this.calories,
     this.target,
     this.icon = Icons.fitness_center,
+    this.imagePath, // Added
   });
 
   // Quick checks for step type
@@ -48,6 +50,7 @@ class WorkoutStep {
                 : null),
       target: j['target']?.toString(),
       icon: _parseIcon(j['icon']),
+      imagePath: j['imagePath']?.toString(), // Added
     );
   }
 
@@ -59,6 +62,7 @@ class WorkoutStep {
     'duration': duration,
     'calories': calories,
     'target': target,
+    'imagePath': imagePath, // Added
   };
 
   // Placeholder icon parser — customize to handle backend icon names

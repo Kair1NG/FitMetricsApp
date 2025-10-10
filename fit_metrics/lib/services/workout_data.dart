@@ -1,3 +1,5 @@
+import 'photo_assets_data.dart';
+
 final List<Map<String, dynamic>> allWorkoutPlans = [
   {
     "title": "Full Body Blast",
@@ -36,3 +38,37 @@ final List<Map<String, dynamic>> allWorkoutPlans = [
     "exercises": ["Pull-Ups", "Bench Press", "Tricep Dips", "Push-Ups"],
   },
 ];
+
+String getExerciseImagePath(String exerciseName) {
+  final name = exerciseName.toLowerCase();
+
+  if (name.contains('squat')) return PhotoAssetsData.squats;
+  if (name.contains('push')) return PhotoAssetsData.pushUps;
+  if (name.contains('pull')) return PhotoAssetsData.pullUps;
+  if (name.contains('jump rope')) return PhotoAssetsData.jumpRope;
+  if (name.contains('high knees')) return PhotoAssetsData.highKnees;
+  if (name.contains('jog')) return PhotoAssetsData.jogging;
+  if (name.contains('plank')) return PhotoAssetsData.planks;
+  if (name.contains('russian twist')) return PhotoAssetsData.russianTwists;
+  if (name.contains('bicycle crunch')) return PhotoAssetsData.bicycleCrunches;
+  if (name.contains('dead bug')) return PhotoAssetsData.deadBug;
+  if (name.contains('bench press')) return PhotoAssetsData.benchPress;
+  if (name.contains('tricep dip')) return PhotoAssetsData.tricepDips;
+
+  return PhotoAssetsData.placeholder;
+}
+
+String getBannerImageForWorkout(String title) {
+  final lowerTitle = title.toLowerCase();
+  if (lowerTitle.contains('cardio kickstart')) {
+    return PhotoAssetsData.cardioKickstartBanner;
+  } else if (lowerTitle.contains('core strength')) {
+    return PhotoAssetsData.coreStrengthBanner;
+  } else if (lowerTitle.contains('full body blast')) {
+    return PhotoAssetsData.fullBodyBlastBanner;
+  } else if (lowerTitle.contains('upper body power')) {
+    return PhotoAssetsData.upperBodyPowerBanner;
+  } else {
+    return PhotoAssetsData.banner;
+  }
+}
