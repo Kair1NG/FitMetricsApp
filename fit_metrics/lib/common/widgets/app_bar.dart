@@ -40,15 +40,12 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           final bool canGoBack = Navigator.of(context).canPop();
           return IconButton(
             icon: Icon(
-              canGoBack ? Icons.arrow_back : Icons.menu,
+              canGoBack ? Icons.arrow_back : null,
               color: colorScheme.onPrimary,
             ),
-            tooltip: 'Menu',
             onPressed: () {
               if (canGoBack) {
                 Navigator.of(context).pop();
-              } else {
-                Scaffold.of(context).openDrawer();
               }
             },
           );

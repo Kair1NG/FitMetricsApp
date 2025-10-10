@@ -267,7 +267,7 @@ class WorkoutDetailsScreen extends StatelessWidget {
                                       Text(
                                         name,
                                         style: TextStyle(
-                                          color: Colors.grey[900],
+                                          color: cs.onSurface,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
@@ -276,7 +276,7 @@ class WorkoutDetailsScreen extends StatelessWidget {
                                       Text(
                                         reps,
                                         style: TextStyle(
-                                          color: Colors.grey[700],
+                                          color: cs.tertiary,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -294,7 +294,7 @@ class WorkoutDetailsScreen extends StatelessWidget {
               ),
             ),
             Container(
-              color: Colors.white,
+              color: cs.surface,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -318,12 +318,12 @@ class WorkoutDetailsScreen extends StatelessWidget {
                         ),
                         elevation: 3,
                       ),
-                      child: const Text(
+                      child: Text(
                         'START',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: cs.onPrimary,
                         ),
                       ),
                     ),
@@ -337,21 +337,21 @@ class WorkoutDetailsScreen extends StatelessWidget {
                         '${exercises.length} Exercises',
                         boxColor: Colors.grey.withAlpha(25),
                         iconColor: Colors.blue,
-                        textColor: Colors.black,
+                        textColor: cs.onSurface,
                       ),
                       _iconWithLabelInBox(
                         Icons.timer_outlined,
                         '~$duration Minutes',
                         boxColor: Colors.grey.withAlpha(25),
                         iconColor: Colors.green,
-                        textColor: Colors.black,
+                        textColor: cs.onSurface,
                       ),
                       _iconWithLabelInBox(
                         Icons.local_fire_department_outlined,
                         intensity,
                         boxColor: Colors.grey.withAlpha(25),
                         iconColor: Colors.orange,
-                        textColor: Colors.black,
+                        textColor: cs.onSurface,
                       ),
                     ],
                   ),

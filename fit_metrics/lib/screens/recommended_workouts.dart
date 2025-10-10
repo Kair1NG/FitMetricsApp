@@ -1,3 +1,4 @@
+import 'package:fit_metrics/common/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:fit_metrics/services/workout_data.dart';
 import 'package:fit_metrics/screens/workout_details.dart';
@@ -27,6 +28,7 @@ class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final recommendedSet = widget.recommendations.toSet();
 
     List<Map<String, dynamic>> plans = widget.recommendations.isNotEmpty
@@ -41,10 +43,9 @@ class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Workout Library"),
-        centerTitle: true,
-        backgroundColor: Colors.blue.shade700,
+      appBar: CommonAppBar(
+        title: 'Workout Library',
+        icon: Icons.fitness_center,
       ),
       body: Column(
         children: [
@@ -52,23 +53,20 @@ class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
-              color: Colors.blue.shade50,
+              color: colorScheme.secondary,
               child: Text(
                 widget.geminiMessage,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  color: colorScheme.onSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
 
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -96,6 +94,7 @@ class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
   }
 
   Widget _buildFilterButton(String label) {
+    final colorScheme = Theme.of(context).colorScheme;
     final bool isActive = activeFilter == label;
     return GestureDetector(
       onTap: () {
@@ -106,16 +105,16 @@ class _WorkoutLibraryScreenState extends State<WorkoutLibraryScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue.shade700 : Colors.transparent,
+          color: isActive ? colorScheme.primary : colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? Colors.blue.shade700 : Colors.grey.shade400,
+            color: isActive ? colorScheme.onPrimary : colorScheme.tertiary,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.black87,
+            color: isActive ? colorScheme.onPrimary : colorScheme.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -144,6 +143,7 @@ class _WorkoutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -175,7 +175,7 @@ class _WorkoutCard extends StatelessWidget {
                 Icon(
                   _getIconForLevel(plan["level"]),
                   size: 28,
-                  color: Colors.blue.shade700,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -224,12 +224,12 @@ class _WorkoutCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               plan["description"],
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
             ),
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.timer, size: 18, color: Colors.grey.shade800),
+                Icon(Icons.timer, size: 18, color: colorScheme.onSurface),
                 const SizedBox(width: 6),
                 Text(
                   "${plan["duration"]} min",
@@ -260,7 +260,7 @@ class _WorkoutCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: plan["borderColor"] ?? Colors.grey.shade300,

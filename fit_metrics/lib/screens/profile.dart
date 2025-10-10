@@ -1,3 +1,4 @@
+import 'package:fit_metrics/common/widgets/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fit_metrics/common/helpers/container_extensions.dart';
@@ -5,6 +6,8 @@ import 'package:fit_metrics/common/widgets/app_bar.dart';
 import '../services/progress_bmi_service.dart';
 import 'login.dart';
 import 'register.dart';
+import 'package:provider/provider.dart';
+import 'profile_edit.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -19,6 +22,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   double? currentHeight;
   double? currentWeight;
   User? currentUser;
+  int? age;
+  String? gender;
 
   @override
   void initState() {
@@ -34,6 +39,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       currentCategory = bmiService.getCurrentCategory();
       currentHeight = bmiService.getCurrentHeight();
       currentWeight = bmiService.getCurrentWeight();
+      age = bmiService.getAge();
+      gender = bmiService.getGender();
     });
   }
 
@@ -103,7 +110,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fontSize: 16,
                           ),
                     ),
-                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 5),
 
                     // First row
                     Row(
@@ -114,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _buildInfoTile(
                                 context,
                                 label: 'Age',
-                                value: '19',
+                                value: age != null ? '$age' : 'Not set',
                                 colorScheme: colorScheme,
                               ),
                               _buildInfoTile(
@@ -134,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _buildInfoTile(
                                 context,
                                 label: 'Gender',
-                                value: 'Male',
+                                value: gender != null ? '$gender' : 'Not set',
                                 colorScheme: colorScheme,
                               ),
                               _buildInfoTile(
@@ -166,9 +174,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             isLast: true,
                           ),
                         ),
+
+                        // Edit Profile
                         FilledButton.tonal(
                           onPressed: () {
-                            debugPrint('Edit profile pressed');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProfileEditScreen(),
+                              ),
+                            ).then((_) => _loadProfileData());
                           },
                           style: FilledButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -187,6 +202,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Text('Edit'),
                             ],
                           ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Settings
+              context.styledContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Settings',
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurface,
+                            fontSize: 16,
+                          ),
+                    ),
+                    //divider line
+                    const Divider(),
+                    const SizedBox(height: 5),
+
+                    // Dark Mode Toggle
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Dark Mode',
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        Consumer<ThemeProvider>(
+                          builder: (context, themeProvider, child) {
+                            return Switch(
+                              value: themeProvider.isDarkMode,
+                              onChanged: (value) {
+                                themeProvider.toggleTheme();
+                              },
+                              activeColor: colorScheme.primary,
+                            );
+                          },
                         ),
                       ],
                     ),
