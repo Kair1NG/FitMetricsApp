@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/progress_bmi_chart.dart';
-import '../widgets/weekly_progress_list.dart';
 import '../widgets/progress_bmi_stat_card.dart';
 import '../widgets/progress_current_weight_card.dart';
 import '../widgets/bmi_goal_card.dart';
+import '../widgets/weekly_progress_list.dart';
 import '../services/progress_entry.dart';
 
 class ProgressBMIScreen extends StatelessWidget {
@@ -24,90 +24,124 @@ class ProgressBMIScreen extends StatelessWidget {
     final currentBmi = getCurrentBMI();
     final change = getChange();
     final currentWeight = getCurrentWeight();
-    const double goalBMI = 22.0;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F5FA),
-      // ---------------- Persistent Top Bar ----------------
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1E88E5),
-        elevation: 0,
-        title: const Text(
-          'BMI Progress',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ---------------- Stat Cards ----------------
-            Row(
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF7F5FA),
+      body: Column(
+        children: [
+          // Top bar
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            color: Colors.blue,
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: ProgressBMIStatCard(
-                    label: 'Current BMI',
-                    value: currentBmi.toStringAsFixed(1),
-                    numberColor: Colors.green,
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.arrow_back, color: Colors.white),
+                      SizedBox(width: 6),
+                      Icon(Icons.show_chart, color: Colors.white),
+                      SizedBox(width: 6),
+                      Text(
+                        'BMI Progress',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ProgressBMIStatCard(
-                    label: 'Change',
-                    value: change.toStringAsFixed(1),
-                    numberColor: change < 0 ? Colors.orange : Colors.blue,
+                // Profile icon
+                Container(
+                  color: isDark ? Colors.black : Colors.white,
+                  padding: const EdgeInsets.all(4),
+                  child: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.blue,
+                    child: const Icon(Icons.person, color: Colors.white, size: 24),
                   ),
                 ),
               ],
             ),
+          ),
 
-            const SizedBox(height: 12),
+          // Main scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Stat Cards: Current BMI, Change, Current Weight
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ProgressBMIStatCard(
+                          label: 'Current BMI',
+                          value: currentBmi.toStringAsFixed(1),
+                          overlayColor: Colors.green,
+                          numberColor: Colors.green,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ProgressBMIStatCard(
+                          label: 'Change',
+                          value: change.toStringAsFixed(1),
+                          overlayColor: change < 0 ? Colors.orange : Colors.blue,
+                          numberColor: change < 0 ? Colors.orange : Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CurrentWeightCard(
+                          weight: currentWeight,
+                          overlayColor: Colors.purple,
+                          numberColor: Colors.purple,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
 
-            // ---------------- Current Weight ----------------
-            CurrentWeightCard(
-              weight: currentWeight,
-              numberColor: Colors.purple,
-            ),
+                  // BMI Progress Chart
+                  ProgressChart(
+                    entries: entries,
+                    goalBMI: 22.0,
+                  ),
+                  const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
+                  // BMI Goal Card
+                  BMIGoalCard(
+                    label: 'BMI Goal',
+                    value: '22.0',
+                    icon: Icons.show_chart,
+                  ),
+                  const SizedBox(height: 20),
 
-            // ---------------- BMI Progress Chart ----------------
-            ProgressChart(
-              entries: entries,
-              goalBMI: goalBMI,
-            ),
-
-            const SizedBox(height: 20),
-
-            // ---------------- BMI Goal Card ----------------
-            BMIGoalCard(
-              label: 'BMI Goal',
-              value: goalBMI.toStringAsFixed(1),
-            ),
-
-            const SizedBox(height: 20),
-
-            // ---------------- Weekly Progress List ----------------
-            const Text(
-              'Weekly Progress',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                  // Weekly Progress
+                  const Text(
+                    'Weekly Progress',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  WeeklyProgressList(entries: entries),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            WeeklyProgressList(entries: entries),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

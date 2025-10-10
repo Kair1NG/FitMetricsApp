@@ -8,22 +8,35 @@ class WeeklyProgressList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: entries.map((entry) {
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 6),
-          shape: RoundedRectangleBorder(
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: ListTile(
-            title: Text(
-              'BMI: ${entry.bmi.toStringAsFixed(1)}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              'Weight: ${entry.weight.toStringAsFixed(1)} kg',
-            ),
-            leading: const Icon(Icons.show_chart, color: Colors.blue),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Week ${entry.weekNumber}', // Now using explicit weekNumber
+                style: TextStyle(
+                  fontSize: 16,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              Text(
+                'BMI: ${entry.bmi.toStringAsFixed(1)}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         );
       }).toList(),

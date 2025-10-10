@@ -1,11 +1,12 @@
 class ProgressEntry {
-  final int week;
+  final int weekNumber;
   final double bmi;
   final double weight;
 
-  const ProgressEntry({
-    required this.week,
+  ProgressEntry({
+    required this.weekNumber,
     required this.bmi,
     required this.weight,
   });
 }
+

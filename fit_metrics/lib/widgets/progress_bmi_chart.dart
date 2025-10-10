@@ -27,14 +27,14 @@ class _ProgressChartState extends State<ProgressChart> {
     double minY = widget.entries.map((e) => e.bmi).reduce((a, b) => a < b ? a : b) - 1;
     double maxY = widget.entries.map((e) => e.bmi).reduce((a, b) => a > b ? a : b) + 1;
 
-    // Gradient line segments
+    // Line segments
     List<LineChartBarData> segments = [];
     for (int i = 0; i < pageEntries.length - 1; i++) {
       double bmi1 = pageEntries[i].bmi;
       double bmi2 = pageEntries[i + 1].bmi;
 
       double avgDiff = ((bmi1 + bmi2) / 2 - widget.goalBMI).abs();
-      double intensity = (avgDiff / widget.goalBMI).clamp(0, 1); // 0 = close, 1 = far
+      double intensity = (avgDiff / widget.goalBMI).clamp(0, 1); 
       Color segmentColor = Color.lerp(Colors.green, Colors.red, intensity)!;
 
       segments.add(LineChartBarData(
@@ -49,7 +49,7 @@ class _ProgressChartState extends State<ProgressChart> {
       ));
     }
 
-    // Dots 
+    // Dots
     List<LineChartBarData> dotBars = [
       LineChartBarData(
         spots: List.generate(
@@ -79,7 +79,6 @@ class _ProgressChartState extends State<ProgressChart> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ----------------- BMI Chart -----------------
         SizedBox(
           height: 250,
           child: LineChart(
@@ -105,6 +104,7 @@ class _ProgressChartState extends State<ProgressChart> {
               ),
               titlesData: FlTitlesData(
                 topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -137,17 +137,14 @@ class _ProgressChartState extends State<ProgressChart> {
                     },
                   ),
                 ),
-                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: true),
               lineBarsData: [...segments, ...dotBars],
             ),
           ),
         ),
-
         const SizedBox(height: 8),
-
-        // Pagination arrows + dots
+        // Pagination
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -177,11 +174,13 @@ class _ProgressChartState extends State<ProgressChart> {
             ),
           ],
         ),
-
-        const SizedBox(height: 16),
       ],
     );
   }
 }
+
+
+
+
 
 
