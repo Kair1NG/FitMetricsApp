@@ -28,17 +28,17 @@ class ProgressBMIStatCard extends StatelessWidget {
             right: 0,
             height: 28,
             child: Container(
-              color: overlayColor.withOpacity(0.6), // fixed color
+              color: overlayColor.withOpacity(0.6), 
             ),
           ),
 
-          // Main card background (fixed color)
+          // Main 
           Positioned.fill(
             top: 0,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                color: overlayColor.withOpacity(0.2), // subtle transparent background
+                color: overlayColor.withOpacity(0.2), 
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
@@ -50,7 +50,7 @@ class ProgressBMIStatCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: numberColor, // fixed color
+                        color: numberColor, 
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -58,7 +58,7 @@ class ProgressBMIStatCard extends StatelessWidget {
                       label,
                       style: TextStyle(
                         fontSize: 16,
-                        color: numberColor.withOpacity(0.8), // fixed color
+                        color: numberColor.withOpacity(0.8), 
                       ),
                     ),
                   ],

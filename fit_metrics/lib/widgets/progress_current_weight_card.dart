@@ -30,7 +30,7 @@ class CurrentWeightCard extends StatelessWidget {
             ),
           ),
 
-          // Main card background (same as overlay)
+          // Main
           Positioned.fill(
             top: 0,
             child: Container(

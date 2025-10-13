@@ -19,7 +19,7 @@ class BMIGoalCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.blue, // Always blue
+        color: Colors.blue,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

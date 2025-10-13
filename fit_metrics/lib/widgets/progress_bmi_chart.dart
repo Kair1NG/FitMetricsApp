@@ -18,6 +18,11 @@ class _ProgressChartState extends State<ProgressChart> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gridColor = isDark ? Colors.white24 : Colors.grey.withOpacity(0.3);
+    final borderColor = isDark ? Colors.white38 : Colors.black26;
+    final labelColor = isDark ? Colors.white70 : Colors.black87;
+
     int totalPages = (widget.entries.length / weeksPerPage).ceil();
     int startIndex = currentPage * weeksPerPage;
     int endIndex = (startIndex + weeksPerPage).clamp(0, widget.entries.length);
@@ -27,14 +32,14 @@ class _ProgressChartState extends State<ProgressChart> {
     double minY = widget.entries.map((e) => e.bmi).reduce((a, b) => a < b ? a : b) - 1;
     double maxY = widget.entries.map((e) => e.bmi).reduce((a, b) => a > b ? a : b) + 1;
 
-    // Line segments
+    // Line segments with gradient color intensity based on goal distance
     List<LineChartBarData> segments = [];
     for (int i = 0; i < pageEntries.length - 1; i++) {
       double bmi1 = pageEntries[i].bmi;
       double bmi2 = pageEntries[i + 1].bmi;
 
       double avgDiff = ((bmi1 + bmi2) / 2 - widget.goalBMI).abs();
-      double intensity = (avgDiff / widget.goalBMI).clamp(0, 1); 
+      double intensity = (avgDiff / widget.goalBMI).clamp(0, 1);
       Color segmentColor = Color.lerp(Colors.green, Colors.red, intensity)!;
 
       segments.add(LineChartBarData(
@@ -49,7 +54,7 @@ class _ProgressChartState extends State<ProgressChart> {
       ));
     }
 
-    // Dots
+    // Dots with gradient color
     List<LineChartBarData> dotBars = [
       LineChartBarData(
         spots: List.generate(
@@ -69,7 +74,7 @@ class _ProgressChartState extends State<ProgressChart> {
               radius: 5,
               color: dotColor,
               strokeWidth: 1,
-              strokeColor: Colors.black26,
+              strokeColor: isDark ? Colors.white24 : Colors.black26,
             );
           },
         ),
@@ -94,11 +99,11 @@ class _ProgressChartState extends State<ProgressChart> {
                 horizontalInterval: 1,
                 verticalInterval: 1,
                 getDrawingHorizontalLine: (value) => FlLine(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: gridColor,
                   strokeWidth: 1,
                 ),
                 getDrawingVerticalLine: (value) => FlLine(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: gridColor,
                   strokeWidth: 1,
                 ),
               ),
@@ -115,7 +120,7 @@ class _ProgressChartState extends State<ProgressChart> {
                         padding: const EdgeInsets.only(right: 4),
                         child: Text(
                           value.toStringAsFixed(1),
-                          style: const TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12, color: labelColor),
                         ),
                       );
                     },
@@ -130,7 +135,7 @@ class _ProgressChartState extends State<ProgressChart> {
                       if (index >= 0 && index < pageEntries.length) {
                         return Text(
                           'W${startIndex + index + 1}',
-                          style: const TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12, color: labelColor),
                         );
                       }
                       return const Text('');
@@ -138,18 +143,21 @@ class _ProgressChartState extends State<ProgressChart> {
                   ),
                 ),
               ),
-              borderData: FlBorderData(show: true),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(color: borderColor, width: 1),
+              ),
               lineBarsData: [...segments, ...dotBars],
             ),
           ),
         ),
         const SizedBox(height: 8),
-        // Pagination
+        // Pagination dots and arrows
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back, color: labelColor),
               onPressed: currentPage > 0 ? () => setState(() => currentPage--) : null,
             ),
             Row(
@@ -161,13 +169,15 @@ class _ProgressChartState extends State<ProgressChart> {
                   height: 10,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: i == currentPage ? Colors.green : Colors.grey[300],
+                    color: i == currentPage
+                        ? (isDark ? Colors.greenAccent : Colors.green)
+                        : (isDark ? Colors.white30 : Colors.grey[300]),
                   ),
                 ),
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.arrow_forward),
+              icon: Icon(Icons.arrow_forward, color: labelColor),
               onPressed: currentPage < totalPages - 1
                   ? () => setState(() => currentPage++)
                   : null,
@@ -178,6 +188,7 @@ class _ProgressChartState extends State<ProgressChart> {
     );
   }
 }
+
 
 
 

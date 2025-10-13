@@ -23,17 +23,18 @@ class ProgressBMIPreview extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.light, 
+        brightness: Brightness.dark,
         primaryColor: Colors.blue,
-        colorScheme: const ColorScheme.light(
-          primary: Color.fromARGB(255, 20, 80, 240),
+        colorScheme: const ColorScheme.dark(
+          primary: Color.fromARGB(255, 33, 150, 243),
           onPrimary: Colors.white,
-          surface: Colors.white,
-          onSurface: Colors.black87,
+          surface: Color(0xFF121212),
+          onSurface: Colors.white70,
         ),
       ),
-      themeMode: ThemeMode.light, 
+      themeMode: ThemeMode.dark,
       home: ProgressBMIScreen(entries: entries),
     );
   }
 }
+
